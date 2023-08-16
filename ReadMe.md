@@ -185,6 +185,12 @@ an error message detailing what is wrong with its content. Dashes are not
 considered "gaps" in values. Gaps occur when values in a column do not
 cover all possible integers from the lowest to the highest value.
 
+__Note__: If you do not wish to use scaling, use Column A for the numbers you
+wish to use in the combat tables and leave dashes in the other columns. That is
+not an invalid setup. The program will ignore as unused Columns B, C, or D if
+they are all dashes. It will display a message indicating that it is ignoring
+a column.
+
 ### Outcome (Column 5)
 
 The fifth column must be Outcome. This should be contain the combat outcomes
