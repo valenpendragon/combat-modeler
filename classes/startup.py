@@ -51,7 +51,7 @@ class StartupWindow(QMainWindow):
                 try:
                     self.required_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
                 except ValueError:
-                    QMessageBox.critical(self, "Error", f"Required {worksheet} not found in {filepath}")
+                    QMessageBox.critical(self, "Error", f"Required {worksheet} not found in {self.config_path}")
             print(f"self.required_config_dfs: {self.required_config_dfs}")
             config_found_label = QLabel('Config loaded Successfully. ')
             self.statusbar.addWidget(config_found_label)
