@@ -1,6 +1,6 @@
 import pandas as pd
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QFileDialog, QMessageBox, \
-    QApplication, QMainWindow, QStatusBar, QLabel
+    QApplication, QMainWindow, QStatusBar, QLabel, QHBoxLayout
 import sys
 import os
 
@@ -15,17 +15,21 @@ class StartupWindow(QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle('Combat Modeler')
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(300, 400)
 
         # Add main buttons
-        layout = QVBoxLayout()
         show_button = QPushButton("Show Configuration Tables")
         show_button.clicked.connect(self.show_configuration_tables)
-        layout.addWidget(show_button)
         start_button = QPushButton("Start Combat")
         start_button.clicked.connect(self.start_combat_window)
-        layout.addWidget(start_button)
-        self.setLayout(layout)
+        exit_button = QPushButton("Exit")
+        exit_button.clicked.connect(self.exit_app)
+        self.setCentralWidget(QWidget(self))
+        self.vbox = QVBoxLayout()
+        self.centralWidget().setLayout(self.vbox)
+        self.vbox.addWidget(show_button)
+        self.vbox.addWidget(start_button)
+        self.vbox.addWidget(exit_button)
 
         # Create status bar.
         self.statusbar = QStatusBar()
@@ -66,6 +70,9 @@ class StartupWindow(QMainWindow):
 
     def start_combat_window(self):
         pass
+
+    def exit_app(self):
+        sys.exit()
 
 
 if __name__ == "__main__":
