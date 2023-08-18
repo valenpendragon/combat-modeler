@@ -8,8 +8,9 @@ configuration_filepath = '../data/configuration-tables.xlsx'
 
 
 class StartupWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, filepath=configuration_filepath):
         super().__init__()
+        self.config_path = filepath
         self.init_ui()
         self.load_configuration_tables()
 
@@ -20,6 +21,8 @@ class StartupWindow(QMainWindow):
         # Add main buttons
         show_button = QPushButton("Show Configuration Tables")
         show_button.clicked.connect(self.show_configuration_tables)
+        reload_config_button = QPushButton("Reload Configuration Tables")
+        reload_config_button.clicked.connect(self.load_configuration_tables)
         start_button = QPushButton("Start Combat")
         start_button.clicked.connect(self.start_combat_window)
         exit_button = QPushButton("Exit")
@@ -28,6 +31,7 @@ class StartupWindow(QMainWindow):
         self.vbox = QVBoxLayout()
         self.centralWidget().setLayout(self.vbox)
         self.vbox.addWidget(show_button)
+        self.vbox.addWidget(reload_config_button)
         self.vbox.addWidget(start_button)
         self.vbox.addWidget(exit_button)
 
@@ -35,10 +39,10 @@ class StartupWindow(QMainWindow):
         self.statusbar = QStatusBar()
         self.setStatusBar(self.statusbar)
 
-    def load_configuration_tables(self, filepath=configuration_filepath):
-        if os.path.exists(filepath):
+    def load_configuration_tables(self):
+        if os.path.exists(self.config_path):
             # Load Excel sheets into pandas DataFrames
-            xls = pd.ExcelFile(filepath)
+            xls = pd.ExcelFile(self.config_path)
             required_worksheets = ['Combat Roles', 'Combat Stances', 'Combat Targeting Summary']
             optional_worksheets = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
             self.required_config_dfs = {}
