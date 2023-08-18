@@ -4,11 +4,13 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QFileDialog, QMes
 import sys
 import os
 
-configuration_filepath = '../data/configuration-tables.xlsx'
+CONFIGURATION_FILEPATH = '../data/configuration-tables.xlsx'
+REQUIRED_WORKSHEETS = ['Combat Roles', 'Combat Stances', 'Combat Targeting Summary']
+OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
 
 
 class StartupWindow(QMainWindow):
-    def __init__(self, filepath=configuration_filepath):
+    def __init__(self, filepath=CONFIGURATION_FILEPATH):
         super().__init__()
         self.config_path = filepath
         self.init_ui()
@@ -43,8 +45,8 @@ class StartupWindow(QMainWindow):
         if os.path.exists(self.config_path):
             # Load Excel sheets into pandas DataFrames
             xls = pd.ExcelFile(self.config_path)
-            required_worksheets = ['Combat Roles', 'Combat Stances', 'Combat Targeting Summary']
-            optional_worksheets = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
+            required_worksheets = REQUIRED_WORKSHEETS
+            optional_worksheets = OPTIONAL_WORKSHEETS
             self.required_config_dfs = {}
             self.optional_config_dfs = {}
             for worksheet in required_worksheets:
