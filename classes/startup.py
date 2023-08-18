@@ -41,25 +41,25 @@ class StartupWindow(QMainWindow):
             xls = pd.ExcelFile(filepath)
             required_worksheets = ['Combat Roles', 'Combat Stances', 'Combat Targeting Summary']
             optional_worksheets = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
-            required_config_dfs = {}
-            optional_config_dfs = {}
+            self.required_config_dfs = {}
+            self.optional_config_dfs = {}
             for worksheet in required_worksheets:
                 try:
-                    required_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
+                    self.required_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
                 except ValueError:
-                    QMessageBox.critical(self, "Error", f"{worksheet} not found in {filepath}")
-            print(f"required_config_dfs: {required_config_dfs}")
+                    QMessageBox.critical(self, "Error", f"Required {worksheet} not found in {filepath}")
+            print(f"self.required_config_dfs: {self.required_config_dfs}")
             config_found_label = QLabel('Config loaded Successfully. ')
             self.statusbar.addWidget(config_found_label)
 
             for worksheet in optional_worksheets:
                 try:
-                    optional_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
+                    self.optional_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
                     optional_config_loaded_label = QLabel(f'Loaded Optional {worksheet}. ')
                     self.statusbar.addWidget(optional_config_loaded_label)
                 except ValueError:
-                    optional_config_dfs[worksheet] = None
-            print(f"optional_config_dfs: {optional_config_dfs}")
+                    self.optional_config_dfs[worksheet] = None
+            print(f"optional_config_dfs: {self.optional_config_dfs}")
 
         else:
             config_not_found_label = QLabel('Required Configuration file, configuration-tables.xlsx not found in /data')
