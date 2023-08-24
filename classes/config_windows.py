@@ -50,23 +50,28 @@ class ConfigurationWindow(QDialog):
         self.layout.addWidget(self.combat_lulls_button)
 
     def show_combat_roles(self):
-        print(f"Combat Roles button pressed.")
-
+        data = self.required_config_dfs["Combat Roles"]
+        print(f"data: {data}")
 
     def show_combat_stances(self):
-        print(f"Combat Stances button pressed.")
+        data = self.required_config_dfs["Combat Stances"]
+        print(f"data: {data}")
 
     def show_combat_targeting(self):
-        print(f"Combat Targeting button pressed.")
+        data = self.required_config_dfs["Combat Targeting Summary"]
+        print(f"data: {data}")
 
     def show_combat_role_variants(self):
-        print(f"Combat Role Variants button pressed.")
+        data = self.optional_config_dfs["Combat Role Variations"]
+        print(f"data: {data}")
 
     def show_combat_surges(self):
-        print(f"Combat Surges button pressed.")
+        data = self.optional_config_dfs["Combat Surges"]
+        print(f"data: {data}")
 
     def show_combat_lulls(self):
-        print(f"Combat Lulls button pressed.")
+        data = self.optional_config_dfs["Combat Lulls"]
+        print(f"data: {data}")
 
 
 if __name__ == "__main__":
@@ -78,6 +83,8 @@ if __name__ == "__main__":
         required_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
     for worksheet in OPTIONAL_WORKSHEETS:
         optional_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
+    print(f"required config dfs: {required_config_dfs}")
+    print(f"optional config dfs: {optional_config_dfs}")
     window = ConfigurationWindow(required_config_dfs, optional_config_dfs)
     window.show()
     sys.exit(app.exec())
