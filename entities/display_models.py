@@ -46,15 +46,3 @@ class PandasModel(QAbstractTableModel):
             if orientation == Qt.Vertical:
                 return str(self._dataframe.index[section])
         return None
-
-
-class ConfigTableModel(PandasModel):
-    pass
-
-
-class CombatActionTableModel(PandasModel):
-    pass
-
-
-class CombatTargetTableModel(PandasModel):
-    pass

@@ -1,6 +1,7 @@
 import pandas as pd
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QFileDialog, QMessageBox, \
-    QApplication, QMainWindow, QStatusBar, QLabel, QHBoxLayout, QDialog
+    QApplication, QMainWindow, QStatusBar, QLabel, QHBoxLayout, QDialog, QTableView
+from entities import PandasModel
 import sys
 import os
 
@@ -50,28 +51,63 @@ class ConfigurationWindow(QDialog):
         self.layout.addWidget(self.combat_lulls_button)
 
     def show_combat_roles(self):
-        data = self.required_config_dfs["Combat Roles"]
+        title = "Combat Roles"
+        data = self.required_config_dfs[title]
         print(f"data: {data}")
+        dialog = ConfigDisplayDialog(title, data)
+        dialog.exec()
 
     def show_combat_stances(self):
-        data = self.required_config_dfs["Combat Stances"]
+        title = "Combat Stances"
+        data = self.required_config_dfs[title]
         print(f"data: {data}")
+        dialog = ConfigDisplayDialog(title, data)
+        dialog.exec()
 
     def show_combat_targeting(self):
-        data = self.required_config_dfs["Combat Targeting Summary"]
+        title = "Combat Targeting Summary"
+        data = self.required_config_dfs[title]
         print(f"data: {data}")
+        dialog = ConfigDisplayDialog(title, data)
+        dialog.exec()
 
     def show_combat_role_variants(self):
-        data = self.optional_config_dfs["Combat Role Variations"]
+        title = "Combat Role Variations"
+        data = self.optional_config_dfs[title]
         print(f"data: {data}")
+        dialog = ConfigDisplayDialog(title, data)
+        dialog.exec()
 
     def show_combat_surges(self):
-        data = self.optional_config_dfs["Combat Surges"]
+        title = "Combat Surges"
+        data = self.optional_config_dfs[title]
         print(f"data: {data}")
+        dialog = ConfigDisplayDialog(title, data)
+        dialog.exec()
 
     def show_combat_lulls(self):
-        data = self.optional_config_dfs["Combat Lulls"]
+        title = "Combat Lulls"
+        data = self.optional_config_dfs[title]
         print(f"data: {data}")
+        dialog = ConfigDisplayDialog(title, data)
+        dialog.exec()
+
+
+class ConfigDisplayDialog(QDialog):
+    def __init__(self, window_title: str, data: pd.DataFrame):
+        super().__init__()
+        self.setWindowTitle(window_title)
+        self.setMinimumSize(800, 400)
+        layout = QVBoxLayout()
+        self.view = QTableView()
+        self.view.horizontalHeader().setStretchLastSection(True)
+        self.view.setAlternatingRowColors(True)
+        self.view.setSelectionBehavior(QTableView.SelectRows)
+        self.model = PandasModel(data)
+        self.view.setModel(self.model)
+        layout.addWidget(self.view)
+        self.setLayout(layout)
+
 
 
 if __name__ == "__main__":
