@@ -52,6 +52,7 @@ class ConfigurationWindow(QDialog):
     def show_combat_roles(self):
         print(f"Combat Roles button pressed.")
 
+
     def show_combat_stances(self):
         print(f"Combat Stances button pressed.")
 
