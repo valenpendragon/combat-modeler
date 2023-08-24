@@ -1,16 +1,16 @@
 import sys
-from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtCore import Qt
+from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex
 import pandas as pd
 
 
-class ConfigTableModel(QtCore.QAbstractTableModel):
+class ConfigTableModel(QAbstractTableModel):
     pass
 
 
-class CombatActionTableModel(QtCore.QAbstractTableModel):
+class CombatActionTableModel(QAbstractTableModel):
     pass
 
 
-class CombatTargetTableModel(QtCore.QAbstractTableModel):
+class CombatTargetTableModel(QAbstractTableModel):
     pass
