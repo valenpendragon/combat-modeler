@@ -1,10 +1,11 @@
 import pandas as pd
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QFileDialog, QMessageBox, \
     QApplication, QMainWindow, QStatusBar, QLabel, QHBoxLayout
+from classes import ConfigurationWindow
 import sys
 import os
 
-CONFIGURATION_FILEPATH = '../data/configuration-tables.xlsx'
+CONFIGURATION_FILEPATH = './data/configuration-tables.xlsx'
 REQUIRED_WORKSHEETS = ['Combat Roles', 'Combat Stances', 'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
 
@@ -72,7 +73,9 @@ class StartupWindow(QMainWindow):
             self.statusbar.addWidget(config_not_found_label)
 
     def show_configuration_tables(self):
-        pass
+        config_window = ConfigurationWindow(self.required_config_dfs,
+                                            self.optional_config_dfs)
+        config_window.exec()
 
     def start_combat_window(self):
         pass

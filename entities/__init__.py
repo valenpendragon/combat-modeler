@@ -1,2 +1,1 @@
-from .display_models import CombatActionTableModel, ConfigTableModel, \
-    CombatTargetTableModel, PandasModel
+from .display_models import PandasModel
