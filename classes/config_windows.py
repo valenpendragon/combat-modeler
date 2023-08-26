@@ -1,6 +1,7 @@
 import pandas as pd
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QFileDialog, QMessageBox, \
-    QApplication, QMainWindow, QStatusBar, QLabel, QHBoxLayout, QDialog, QTableView
+    QApplication, QMainWindow, QStatusBar, QLabel, QHBoxLayout, QDialog, QTableView, \
+    QGridLayout, QDialogButtonBox
 from entities import PandasModel
 import sys
 import os
@@ -106,8 +107,12 @@ class ConfigDisplayDialog(QDialog):
         self.model = PandasModel(data)
         self.view.setModel(self.model)
         layout.addWidget(self.view)
+        self.buttonbox = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        self.buttonbox.accepted.connect(self.accept)
+        self.buttonbox.rejected.connect(self.reject)
+        layout.addWidget(self.buttonbox)
         self.setLayout(layout)
-
 
 
 if __name__ == "__main__":
