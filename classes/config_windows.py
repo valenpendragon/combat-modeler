@@ -35,6 +35,8 @@ class ConfigurationWindow(QDialog):
         self.combat_surges_button.clicked.connect(self.show_combat_surges)
         self.combat_lulls_button = QPushButton("Show Combat Lulls")
         self.combat_lulls_button.clicked.connect(self.show_combat_lulls)
+        self.close_button = QPushButton("Close")
+        self.close_button.clicked.connect(self.close)
         # Optional configuration tables should be disabled if
         # they are not present.
         if optional_config_dfs["Combat Role Variations"] is None:
@@ -50,6 +52,7 @@ class ConfigurationWindow(QDialog):
         self.layout.addWidget(self.combat_role_variant_button)
         self.layout.addWidget(self.combat_surges_button)
         self.layout.addWidget(self.combat_lulls_button)
+        self.layout.addWidget(self.close_button)
 
     def show_combat_roles(self):
         title = "Combat Roles"
