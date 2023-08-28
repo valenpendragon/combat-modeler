@@ -1,7 +1,9 @@
 import pandas as pd
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QFileDialog, QMessageBox, \
-    QApplication, QMainWindow, QStatusBar, QLabel, QHBoxLayout, QDialog, QTableView, \
-    QGridLayout, QDialogButtonBox, QTabWidget, QLineEdit, QTextEdit, QComboBox
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QPushButton, QFileDialog,
+                               QMessageBox, QApplication, QMainWindow, QStatusBar,
+                               QLabel, QHBoxLayout, QDialog, QTableView,
+                               QGridLayout, QDialogButtonBox, QTabWidget,
+                               QLineEdit, QTextEdit, QComboBox, QToolBar, QToolButton)
 from entities import PandasModel
 import sys
 import os
@@ -65,6 +67,23 @@ class CombatModeler(QWidget):
 
         mainLayout.addWidget(self.text_display, 0, 1, 0, 1)
 
+        # Adding Toolbar.
+        self.toolbar = QToolBar()
+        self.run_sim_button = QPushButton("Run Simulation")
+        self.run_sim_button.clicked.connect(self.run_simulation)
+        self.toolbar.addWidget(self.run_sim_button)
+        self.save_tab_data_button = QPushButton("Save Tab Data")
+        self.save_tab_data_button.clicked.connect(self.save_tab_data)
+        self.toolbar.addWidget(self.save_tab_data_button)
+        self.clear_tab_data_button = QPushButton("Clear Tab Data")
+        self.save_tab_data_button.clicked.connect(self.clear_tabs)
+        self.toolbar.addWidget(self.clear_tab_data_button)
+        self.close_window_button = QPushButton("Close Window")
+        self.close_window_button.clicked.connect(self.close_simulator)
+        self.toolbar.addWidget(self.close_window_button)
+
+        mainLayout.addWidget(self.toolbar, 2, 0, 3, 0)
+
         self.setLayout(mainLayout)
 
     def extract_dropdown_lists(self, required_config_dfs, optional_config_dfs):
@@ -94,6 +113,18 @@ class CombatModeler(QWidget):
             config['Surges and Lulls'] = None
         config['Relative Difficulty'] = DIFFICULTY_VARIATIONS
         return config
+
+    def run_simulation(self):
+        pass
+
+    def clear_tabs(self):
+        pass
+
+    def save_tab_data(self):
+        pass
+
+    def close_simulator(self):
+        self.close()
 
 
 class CharacterTab(QWidget):
