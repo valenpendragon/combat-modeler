@@ -1,7 +1,8 @@
 import pandas as pd
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QFileDialog, QMessageBox, \
-    QApplication, QMainWindow, QStatusBar, QLabel, QHBoxLayout
-from classes import ConfigurationWindow, CombatModeler
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QPushButton, QFileDialog,
+                               QMessageBox, QApplication, QMainWindow, QStatusBar,
+                               QLabel, QHBoxLayout)
+from classes import ConfigurationWindow, CombatModelerWindow
 import sys
 import os
 
@@ -78,8 +79,8 @@ class StartupWindow(QMainWindow):
         config_window.exec()
 
     def start_combat_window(self):
-        self.combat_window = CombatModeler(self.required_config_dfs,
-                                           self.optional_config_dfs)
+        self.combat_window = CombatModelerWindow(self.required_config_dfs,
+                                                 self.optional_config_dfs)
         self.combat_window.show()
 
     def exit_app(self):

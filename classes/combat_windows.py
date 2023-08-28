@@ -15,7 +15,7 @@ DIFFICULTY_VARIATIONS = ['A', 'B', 'C', 'D']
 INDIVIDUAL_LEVEL = ['Low', 'Moderate', 'Advanced', 'Elite']
 
 
-class CombatModeler(QWidget):
+class CombatModelerWindow(QWidget):
     def __init__(self, required_config_dfs, optional_config_dfs, parent=None):
         super().__init__(parent)
         self.setMinimumSize(800, 600)
@@ -190,6 +190,6 @@ if __name__ == "__main__":
         required_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
     for worksheet in OPTIONAL_WORKSHEETS:
         optional_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
-    window = CombatModeler(required_config_dfs, optional_config_dfs)
+    window = CombatModelerWindow(required_config_dfs, optional_config_dfs)
     window.show()
     sys.exit(app.exec())
