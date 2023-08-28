@@ -63,7 +63,7 @@ class CombatModeler(QWidget):
         self.text_display = QTextEdit(self)
         self.text_display.setReadOnly(True)
 
-        mainLayout.addWidget(self.text_display, 0, 1)
+        mainLayout.addWidget(self.text_display, 0, 1, 0, 1)
 
         self.setLayout(mainLayout)
 
@@ -119,6 +119,6 @@ if __name__ == "__main__":
         required_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
     for worksheet in OPTIONAL_WORKSHEETS:
         optional_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
-    window = CombatModeler(None, required_config_dfs, optional_config_dfs)
+    window = CombatModeler(required_config_dfs, optional_config_dfs)
     window.show()
     sys.exit(app.exec())

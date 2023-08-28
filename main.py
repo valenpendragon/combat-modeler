@@ -78,9 +78,9 @@ class StartupWindow(QMainWindow):
         config_window.exec()
 
     def start_combat_window(self):
-        combat_window = CombatModeler(self.required_config_dfs,
-                                      self.optional_config_dfs)
-        combat_window.show()
+        self.combat_window = CombatModeler(self.required_config_dfs,
+                                           self.optional_config_dfs)
+        self.combat_window.show()
 
     def exit_app(self):
         sys.exit()
