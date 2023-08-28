@@ -1,7 +1,7 @@
 import pandas as pd
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QFileDialog, QMessageBox, \
     QApplication, QMainWindow, QStatusBar, QLabel, QHBoxLayout, QDialog, QTableView, \
-    QGridLayout, QDialogButtonBox, QTabWidget, QLineEdit, QTextEdit
+    QGridLayout, QDialogButtonBox, QTabWidget, QLineEdit, QTextEdit, QComboBox
 from entities import PandasModel
 import sys
 import os
@@ -33,16 +33,16 @@ class CombatModeler(QWidget):
         print(f"combat_lulls: {self.combat_lulls}")
 
         # Create tabs
-        self.tab0 = CharacterTab(self)
-        self.tab1 = CharacterTab(self)
-        self.tab2 = CharacterTab(self)
-        self.tab3 = CharacterTab(self)
-        self.tab4 = CharacterTab(self)
-        self.tab5 = CharacterTab(self)
-        self.tab6 = CharacterTab(self)
-        self.tab7 = CharacterTab(self)
-        self.tab8 = CharacterTab(self)
-        self.tab9 = CharacterTab(self)
+        self.tab0 = CharacterTab(self, self.config)
+        self.tab1 = CharacterTab(self, self.config)
+        self.tab2 = CharacterTab(self, self.config)
+        self.tab3 = CharacterTab(self, self.config)
+        self.tab4 = CharacterTab(self, self.config)
+        self.tab5 = CharacterTab(self, self.config)
+        self.tab6 = CharacterTab(self, self.config)
+        self.tab7 = CharacterTab(self, self.config)
+        self.tab8 = CharacterTab(self, self.config)
+        self.tab9 = CharacterTab(self, self.config)
         self.tab_widget1 = QTabWidget()
         self.tab_widget1.addTab(self.tab0, "One")
         self.tab_widget1.addTab(self.tab1, "Two")
@@ -97,14 +97,54 @@ class CombatModeler(QWidget):
 
 
 class CharacterTab(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent, config):
         super().__init__(parent)
+        self.config = config
 
         self.layout = QGridLayout()
-        self.tab_name_label = QLabel("Set Tab Name:")
+        self.tab_name_label = QLabel("Set Name:")
         self.layout.addWidget(self.tab_name_label, 0, 0)
-        self.name_input = QLineEdit()
+        self.name_input = QLineEdit(self)
         self.layout.addWidget(self.name_input, 0, 1)
+
+        # Create Combat Role ComboBox.
+        self.combat_role_label = QLabel("Combat Role:")
+        self.layout.addWidget(self.combat_role_label, 1, 0)
+        self.combat_role_cbox = QComboBox()
+        for item in self.config['Combat Roles']:
+            self.combat_role_cbox.addItem(item)
+        self.layout.addWidget(self.combat_role_cbox, 1, 1)
+
+        # Create Combat Stance ComboBox.
+        self.combat_stance_label = QLabel("Combat Stance:")
+        self.layout.addWidget(self.combat_stance_label, 2, 0)
+        self.combat_stance_cbox = QComboBox()
+        for item in self.config['Combat Stances']:
+            self.combat_stance_cbox.addItem(item)
+        self.layout.addWidget(self.combat_stance_cbox, 2, 1)
+
+        # Create Combat Role Variant ComboBox.
+        self.combat_role_variant_label = QLabel("Role Variants:")
+        self.layout.addWidget(self.combat_role_variant_label, 3, 0)
+        if config['Combat Role Variations']:
+            self.combat_role_variant_cbox = QComboBox()
+            for item in self.config['Combat Role Variations']:
+                self.combat_role_variant_cbox.addItem(item)
+        else:
+            self.combat_role_variant_cbox = QLabel("Not configured")
+        self.layout.addWidget(self.combat_role_variant_cbox, 3, 1)
+
+        # Create Combat Surges and Lulls ComboBox.
+        self.combat_surge_lull_label = QLabel("Surges and/or Lulls:")
+        self.layout.addWidget(self.combat_surge_lull_label, 4, 0)
+        if config['Surges and Lulls']:
+            self.combat_surge_lull_cbox = QComboBox()
+            for item in self.config['Surges and Lulls']:
+                self.combat_surge_lull_cbox.addItem(item)
+        else:
+            self.combat_surge_lull_cbox = QLabel("Not configured")
+        self.layout.addWidget(self.combat_surge_lull_cbox, 4, 1)
+
         self.setLayout(self.layout)
 
 
