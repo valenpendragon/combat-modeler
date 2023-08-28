@@ -119,7 +119,9 @@ class ConfigDisplayDialog(QDialog):
 
 
 if __name__ == "__main__":
+    sys.argv += ['-platform', 'windows:darkmode=2']
     app = QApplication(sys.argv)
+    app.setStyle('Fusion')
     required_config_dfs = {}
     optional_config_dfs = {}
     xls = pd.ExcelFile(CONFIGURATION_FILEPATH)

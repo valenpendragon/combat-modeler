@@ -78,17 +78,18 @@ class StartupWindow(QMainWindow):
         config_window.exec()
 
     def start_combat_window(self):
-        combat_window = CombatModeler(self,
-                                      self.required_config_dfs,
+        combat_window = CombatModeler(self.required_config_dfs,
                                       self.optional_config_dfs)
-        combat_window.exec()
+        combat_window.show()
 
     def exit_app(self):
         sys.exit()
 
 
 if __name__ == "__main__":
+    sys.argv += ['-platform', 'windows:darkmode=2']
     app = QApplication(sys.argv)
+    app.setStyle('Fusion')
     window = StartupWindow()
     window.show()
     sys.exit(app.exec())
