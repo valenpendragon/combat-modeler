@@ -208,9 +208,9 @@ accordingly.  The program will handle find it with the truncated name.
 The tables require a specific order of items in the title, each separated 
 by a single space. Unless specified otherwise, the item is required.
 
-1. Combat Role
-2. Combat Role Variant (optional, active if table exists)
-3. Combat Stance
+1. Combat Roles
+2. Combat Role Variations (optional, active if table exists)
+3. Combat Stances
 4. Action or Targeting
 
 Both an Action and a Targeting tables for each combination of combat role,

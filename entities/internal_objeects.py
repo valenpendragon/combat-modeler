@@ -39,7 +39,7 @@ class Character:
         self.combat_targeting_table_name = None
         self.combat_targeting_table = None
         self.create_table_names()
-        print(self)
+        print(f"__init__: {self}")
 
     def clear_combat(self):
         """This method is required to clear the combat values when the
@@ -51,7 +51,7 @@ class Character:
         self.combat_action_table = None
         self.combat_targeting_table_name = None
         self.combat_targeting_table = None
-        print(self)
+        print(f"clear_combat: {self}")
 
     def update_status(self, name,  combat_role, combat_stance, difficulty,
                       role_variant=None, individual_level=None):
@@ -67,7 +67,7 @@ class Character:
         self.role_variant = role_variant
         self.level = individual_level
         self.create_table_names()
-        print(self)
+        print(f"update_status: {self}")
 
     def create_table_names(self):
         """This method sets the Action and Targeting combat table names. It also
@@ -82,7 +82,7 @@ class Character:
         self.combat_targeting_table_name = targeting_table_name
         self.combat_action_table = self.load_table(action_table_name)
         self.combat_targeting_table = self.load_table(targeting_table_name)
-        print(self)
+        print(f"create_table_names: {self}")
 
     def load_table(self, table_name, combat_tables=COMBAT_TABLES):
         """This method extracts the required table from COMBAT_TABLES and returns
@@ -94,7 +94,7 @@ class Character:
         xls = pd.ExcelFile(combat_tables)
         worksheet_name = table_name[:31]
         table = pd.read_excel(xls, worksheet_name)
-        print(f"table: {table}")
+        print(f"load_table: {table}")
         return table
 
     def __str__(self):
@@ -110,6 +110,7 @@ class Character:
 
 
 if __name__ == "__main__":
+    print("main: First pass:")
     name = "Holy Knight"
     role = "Skirmisher"
     stance = "Relentless"
@@ -117,4 +118,9 @@ if __name__ == "__main__":
     role_variant = "Solo"
     level = "Moderate"
     character = Character(name, role, stance, difficulty, role_variant, level)
-    print(character)
+    print(f"main: {character}")
+    print(f"main: Second pass after reinforcements arrive and the Knight is injured.")
+    character.update_status(name, combat_role='Brute', combat_stance='Bloodied',
+                            difficulty='B', role_variant='Minion',
+                            individual_level='Low')
+    print(f"main: {character}")
