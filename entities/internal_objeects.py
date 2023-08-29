@@ -15,7 +15,7 @@ class Character:
     optional parameters are also provided from the same window.
 
     This class performs the operations to determine the action of the
-    character and who, if anyone, they target. The options for
+    character and who, if anyone, they target.
     :param name: str, required (CombatModeler defaults it to the tab heading.
     :param combat_role: str, required
     :param combat_stance: str, required
