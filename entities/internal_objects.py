@@ -51,6 +51,7 @@ class Character:
         self.combat_action_table = None
         self.combat_targeting_table_name = None
         self.combat_targeting_table = None
+        self.action_abbreviations = None
         print(f"clear_combat: {self}")
 
     def update_status(self, name,  combat_role, combat_stance, difficulty,

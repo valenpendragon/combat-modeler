@@ -7,7 +7,8 @@ import sys
 import os
 
 CONFIGURATION_FILEPATH = '../data/configuration-tables.xlsx'
-REQUIRED_WORKSHEETS = ['Combat Roles', 'Combat Stances', 'Combat Targeting Summary']
+REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
+                       'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
 
 
@@ -22,6 +23,8 @@ class ConfigurationWindow(QDialog):
 
         # Add show config table buttons.
         # Required config buttons are first.
+        self.combat_outcome_button = QPushButton("Show Combat Outcomes")
+        self.combat_outcome_button.clicked.connect(self.show_combat_outcomes)
         self.combat_role_button = QPushButton("Show Combat Roles")
         self.combat_role_button.clicked.connect(self.show_combat_roles)
         self.combat_stances_button = QPushButton("Show Combat Stances")
@@ -46,6 +49,7 @@ class ConfigurationWindow(QDialog):
         if optional_config_dfs["Combat Lulls"] is None:
             self.combat_lulls_button.setEnabled(False)
         self.layout = QVBoxLayout(self)
+        self.layout.addWidget(self.combat_outcome_button)
         self.layout.addWidget(self.combat_role_button)
         self.layout.addWidget(self.combat_stances_button)
         self.layout.addWidget(self.combat_targeting_button)
@@ -54,47 +58,32 @@ class ConfigurationWindow(QDialog):
         self.layout.addWidget(self.combat_lulls_button)
         self.layout.addWidget(self.close_button)
 
-    def show_combat_roles(self):
-        title = "Combat Roles"
+    def show_combat_data(self, title):
         data = self.required_config_dfs[title]
         print(f"data: {data}")
         dialog = ConfigDisplayDialog(title, data)
         dialog.exec()
+
+    def show_combat_outcomes(self):
+        self.show_combat_data("Combat Outcomes")
+
+    def show_combat_roles(self):
+        self.show_combat_data("Combat Roles")
 
     def show_combat_stances(self):
-        title = "Combat Stances"
-        data = self.required_config_dfs[title]
-        print(f"data: {data}")
-        dialog = ConfigDisplayDialog(title, data)
-        dialog.exec()
+        self.show_combat_data("Combat Stances")
 
     def show_combat_targeting(self):
-        title = "Combat Targeting Summary"
-        data = self.required_config_dfs[title]
-        print(f"data: {data}")
-        dialog = ConfigDisplayDialog(title, data)
-        dialog.exec()
+        self.show_combat_data("Combat Targeting Summary")
 
     def show_combat_role_variants(self):
-        title = "Combat Role Variations"
-        data = self.optional_config_dfs[title]
-        print(f"data: {data}")
-        dialog = ConfigDisplayDialog(title, data)
-        dialog.exec()
+        self.show_combat_data("Combat Role Variations")
 
     def show_combat_surges(self):
-        title = "Combat Surges"
-        data = self.optional_config_dfs[title]
-        print(f"data: {data}")
-        dialog = ConfigDisplayDialog(title, data)
-        dialog.exec()
+        self.show_combat_data("Combat Surges")
 
     def show_combat_lulls(self):
-        title = "Combat Lulls"
-        data = self.optional_config_dfs[title]
-        print(f"data: {data}")
-        dialog = ConfigDisplayDialog(title, data)
-        dialog.exec()
+        self.show_combat_data("Combat Lulls")
 
 
 class ConfigDisplayDialog(QDialog):

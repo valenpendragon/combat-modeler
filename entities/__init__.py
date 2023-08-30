@@ -1,2 +1,2 @@
 from .display_models import PandasModel
-from .internal_objeects import Character
+from .internal_objects import Character

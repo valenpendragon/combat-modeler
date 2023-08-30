@@ -9,7 +9,8 @@ import sys
 import os
 
 CONFIGURATION_FILEPATH = '../data/configuration-tables.xlsx'
-REQUIRED_WORKSHEETS = ['Combat Roles', 'Combat Stances', 'Combat Targeting Summary']
+REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
+                       'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
 DIFFICULTY_VARIATIONS = ['A', 'B', 'C', 'D']
 INDIVIDUAL_LEVEL = ['Low', 'Moderate', 'Advanced', 'Elite']
@@ -20,6 +21,7 @@ class CombatModelerWindow(QWidget):
         super().__init__(parent)
         self.setMinimumSize(800, 600)
         self.setWindowTitle("Combat Modeler")
+        self.combat_action_abbrev = None
 
         mainLayout = QGridLayout()
 
@@ -125,6 +127,9 @@ class CombatModelerWindow(QWidget):
 
     def close_simulator(self):
         self.close()
+
+    def create_combat_action_abbrev(self):
+        pass
 
 
 class CharacterTab(QWidget):

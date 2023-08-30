@@ -7,7 +7,8 @@ import sys
 import os
 
 CONFIGURATION_FILEPATH = './data/configuration-tables.xlsx'
-REQUIRED_WORKSHEETS = ['Combat Roles', 'Combat Stances', 'Combat Targeting Summary']
+REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
+                       'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
 
 
