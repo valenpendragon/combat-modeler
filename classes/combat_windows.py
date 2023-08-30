@@ -35,6 +35,7 @@ class CombatModelerWindow(QWidget):
         print(f"config: {self.config}")
         print(f"combat_surges: {self.combat_surges}")
         print(f"combat_lulls: {self.combat_lulls}")
+        self.create_combat_action_abbrev()
 
         # Create tabs
         self.tab0 = CharacterTab(self, self.config)
@@ -129,7 +130,20 @@ class CombatModelerWindow(QWidget):
         self.close()
 
     def create_combat_action_abbrev(self):
-        pass
+        """This method extracts the abbreviation from Combat Outcomes so
+        they can be displayed properly in the combat text feed."""
+        abbrev = []
+        data = self.config["Combat Outcomes"]
+        for item in data:
+            title = item.split(' ')
+            s = ''
+            if title == 1:
+                abbrev.append(item[0:2].upper())
+            else:
+                for word in title:
+                    s += word[0]
+                abbrev.append(s)
+        self.combat_action_abbrev = abbrev
 
 
 class CharacterTab(QWidget):
