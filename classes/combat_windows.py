@@ -225,6 +225,15 @@ class CharacterTab(QWidget):
             self.combat_surge_lull_cbox = QLabel("Not configured")
         self.layout.addWidget(self.combat_surge_lull_cbox, 5, 1)
 
+        # Create Toggle Active button and QLabel to show status.
+        # There is also an attribute to store this status.
+        self.toggle_active_button = QPushButton("Toggle Active")
+        self.status = False
+        self.status_label = QLabel("Inactive")
+        self.toggle_active_button.clicked.connect(self.toggle_status)
+        self.layout.addWidget(self.toggle_active_button, 6, 0)
+        self.layout.addWidget(self.status_label, 6, 1)
+
         # Create tab button to update character data for the tab.
         self.update_button = QPushButton("Update Character")
         self.update_button.clicked.connect(self.update_character)
@@ -249,6 +258,17 @@ class CharacterTab(QWidget):
                                      difficulty=self.difficulty,
                                      role_variant=self.role_variant,
                                      individual_level=self.level)
+
+    def toggle_status(self):
+        """This status determines whether or not the character will be used
+        when the Run Simulation button is clicked in the CharacterModeler
+        window."""
+        if self.status:
+            self.status = False
+            self.status_label.setText("Inactive")
+        else:
+            self.status = True
+            self.status_label.setText("<b>Active</b>")
 
 
 if __name__ == "__main__":
