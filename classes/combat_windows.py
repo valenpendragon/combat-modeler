@@ -152,31 +152,32 @@ class CharacterTab(QWidget):
         self.config = config
 
         # Create character assigned to this tab.
-        default_name = name
-        default_combat_role = config['Combat Roles'][0]
-        default_combat_stance = config['Combat Stances'][0]
-        default_difficulty = config['Relative Difficulty'][0]
+        self.name = name
+        self.combat_role = config['Combat Roles'][0]
+        self.combat_stance = config['Combat Stances'][0]
+        self.difficulty = config['Relative Difficulty'][0]
         if config['Combat Role Variations'] is not None:
-            default_role_variant = config['Combat Role Variations'][0]
+            self.role_variant = config['Combat Role Variations'][0]
         else:
-            default_role_variant = None
+            self.role_variant = None
         if config['Surges and Lulls'] is not None:
-            default_level = INDIVIDUAL_LEVEL[0]
+            self.level = INDIVIDUAL_LEVEL[0]
         else:
-            default_level = None
-        self.character = Character(name = default_name,
-                                   combat_role=default_combat_role,
-                                   combat_stance=default_combat_stance,
-                                   difficulty=default_difficulty,
-                                   role_variant=default_role_variant,
-                                   individual_level=default_level)
+            self.level = None
+        self.character = Character(name = self.name,
+                                   combat_role=self.combat_role,
+                                   combat_stance=self.combat_stance,
+                                   difficulty=self.difficulty,
+                                   role_variant=self.role_variant,
+                                   individual_level=self.level)
 
         # Set up tab layout and widget content.
         self.layout = QGridLayout()
         self.tab_name_label = QLabel("Set Name:")
         self.layout.addWidget(self.tab_name_label, 0, 0)
         self.name_input = QLineEdit(self)
-        self.name_input.setText(default_name)
+        self.name_input.setText(self.name)
+        self.name_input.textEdited.connect(self.update_character)
         self.layout.addWidget(self.name_input, 0, 1)
 
         # Create Combat Role ComboBox.
@@ -194,6 +195,14 @@ class CharacterTab(QWidget):
         for item in self.config['Combat Stances']:
             self.combat_stance_cbox.addItem(item)
         self.layout.addWidget(self.combat_stance_cbox, 2, 1)
+
+        # Create Combat Difficulty ComboBox.
+        self.difficulty_label = QLabel("Encounter Difficulty:")
+        self.layout.addWidget(self.difficulty_label)
+        self.difficulty_cbox = QComboBox()
+        for item in self.config['Relative Difficulty']:
+            self.difficulty_cbox.addItem(item)
+        self.layout.addWidget(self.difficulty_cbox)
 
         # Create Combat Role Variant ComboBox.
         self.combat_role_variant_label = QLabel("Role Variants:")
@@ -218,6 +227,24 @@ class CharacterTab(QWidget):
         self.layout.addWidget(self.combat_surge_lull_cbox, 4, 1)
 
         self.setLayout(self.layout)
+
+    def update_character(self):
+        self.name = self.name_input.text()
+        self.combat_role = self.combat_role_cbox.currentText()
+        self.combat_stance = self.combat_stance_cbox.currentText()
+        self.difficulty = self.difficulty_cbox.currentText()
+        # __init__() set self.roll_variant to None if config has it as None.
+        if self.config['Combat Role Variations'] is not None:
+            self.role_variant = self.combat_role_variant_cbox.currentText()
+        # __init__() set self.level to None if config has it as None.
+        if self.config['Surges and Lulls'] is not None:
+            self.level = self.combat_surge_lull_cbox.currentText()
+        self.character.update_status(name=self.name,
+                                     combat_role=self.combat_role,
+                                     combat_stance=self.combat_stance,
+                                     difficulty=self.difficulty,
+                                     role_variant=self.role_variant,
+                                     individual_level=self.level)
 
 
 if __name__ == "__main__":
