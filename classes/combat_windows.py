@@ -75,17 +75,14 @@ class CombatModelerWindow(QWidget):
         self.run_sim_button = QPushButton("Run Simulation")
         self.run_sim_button.clicked.connect(self.run_simulation)
         self.toolbar.addWidget(self.run_sim_button)
-        self.save_tab_data_button = QPushButton("Save Tab Data")
-        self.save_tab_data_button.clicked.connect(self.save_tab_data)
-        self.toolbar.addWidget(self.save_tab_data_button)
         self.clear_tab_data_button = QPushButton("Clear Tab Data")
-        self.save_tab_data_button.clicked.connect(self.clear_tabs)
+        self.clear_tab_data_button.clicked.connect(self.clear_tabs)
         self.toolbar.addWidget(self.clear_tab_data_button)
         self.close_window_button = QPushButton("Close Window")
         self.close_window_button.clicked.connect(self.close_simulator)
         self.toolbar.addWidget(self.close_window_button)
 
-        mainLayout.addWidget(self.toolbar, 2, 0, 3, 0)
+        mainLayout.addWidget(self.toolbar, 2, 0, 2, 0)
 
         self.setLayout(mainLayout)
 
@@ -121,9 +118,35 @@ class CombatModelerWindow(QWidget):
         pass
 
     def clear_tabs(self):
-        pass
+        """Reinitialize the window."""
+        self.text_display.clear()
+        self.tab_widget1.clear()
+        self.tab_widget2.clear()
+        self.tab0 = CharacterTab(self, self.config, "One")
+        self.tab1 = CharacterTab(self, self.config, "Two")
+        self.tab2 = CharacterTab(self, self.config, "Three")
+        self.tab3 = CharacterTab(self, self.config, "Four")
+        self.tab4 = CharacterTab(self, self.config, "Five")
+        self.tab5 = CharacterTab(self, self.config, "Six")
+        self.tab6 = CharacterTab(self, self.config, "Seven")
+        self.tab7 = CharacterTab(self, self.config, "Eight")
+        self.tab8 = CharacterTab(self, self.config, "Nine")
+        self.tab9 = CharacterTab(self, self.config, "Ten")
+        self.tab_widget1.addTab(self.tab0, "One")
+        self.tab_widget1.addTab(self.tab1, "Two")
+        self.tab_widget1.addTab(self.tab2, "Three")
+        self.tab_widget1.addTab(self.tab3, "Four")
+        self.tab_widget1.addTab(self.tab4, "Five")
+        self.tab_widget2.addTab(self.tab5, "Six")
+        self.tab_widget2.addTab(self.tab6, "Seven")
+        self.tab_widget2.addTab(self.tab7, "Eight")
+        self.tab_widget2.addTab(self.tab8, "Nine")
+        self.tab_widget2.addTab(self.tab9, "Ten")
 
     def save_tab_data(self):
+        pass
+
+    def load_tab_data(self):
         pass
 
     def close_simulator(self):
