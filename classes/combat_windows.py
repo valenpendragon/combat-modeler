@@ -115,7 +115,35 @@ class CombatModelerWindow(QWidget):
         return config
 
     def run_simulation(self):
-        pass
+        ctr = 0
+        for i in range(self.tab_widget1.count()):
+            if self.tab_widget1.widget(i).status:
+                self.tab_widget1.widget(i).character.roll_for_combat_action()
+                self.tab_widget1.widget(i).character.roll_for_combat_targeting()
+                # Do an abbreviation check here later in development.
+                name = self.tab_widget1.widget(i).character.name
+                action = self.tab_widget1.widget(i).character.action
+                target = self.tab_widget1.widget(i).character.target
+                self.text_display.append(f"<p>{name} targets {target} with {action}</p>")
+                ctr += 1
+            else:
+                continue
+
+        for i in range(self.tab_widget2.count()):
+            if self.tab_widget2.widget(i).status:
+                self.tab_widget2.widget(i).character.roll_for_combat_action()
+                self.tab_widget2.widget(i).character.roll_for_combat_targeting()
+                # Do an abbreviation check here later in development.
+                name = self.tab_widget2.widget(i).character.name
+                action = self.tab_widget2.widget(i).character.action
+                target = self.tab_widget2.widget(i).character.target
+                self.text_display.append(f"<p>{name} targets {target} with {action}</p>")
+                ctr += 1
+            else:
+                continue
+
+        if ctr == 0:
+            self.text_display.append(f"<p><b>No tabs are active currently.</b></p>")
 
     def clear_tabs(self):
         """Reinitialize the window."""
