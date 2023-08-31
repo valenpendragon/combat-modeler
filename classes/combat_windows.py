@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QPushButton, QFileDialog,
                                QLabel, QHBoxLayout, QDialog, QTableView,
                                QGridLayout, QDialogButtonBox, QTabWidget,
                                QLineEdit, QTextEdit, QComboBox, QToolBar, QToolButton)
-from entities import PandasModel
+from entities import PandasModel, Character
 import sys
 import os
 
@@ -38,16 +38,16 @@ class CombatModelerWindow(QWidget):
         self.create_combat_action_abbrev()
 
         # Create tabs
-        self.tab0 = CharacterTab(self, self.config)
-        self.tab1 = CharacterTab(self, self.config)
-        self.tab2 = CharacterTab(self, self.config)
-        self.tab3 = CharacterTab(self, self.config)
-        self.tab4 = CharacterTab(self, self.config)
-        self.tab5 = CharacterTab(self, self.config)
-        self.tab6 = CharacterTab(self, self.config)
-        self.tab7 = CharacterTab(self, self.config)
-        self.tab8 = CharacterTab(self, self.config)
-        self.tab9 = CharacterTab(self, self.config)
+        self.tab0 = CharacterTab(self, self.config, "One")
+        self.tab1 = CharacterTab(self, self.config, "Two")
+        self.tab2 = CharacterTab(self, self.config, "Three")
+        self.tab3 = CharacterTab(self, self.config, "Four")
+        self.tab4 = CharacterTab(self, self.config, "Five")
+        self.tab5 = CharacterTab(self, self.config, "Six")
+        self.tab6 = CharacterTab(self, self.config, "Seven")
+        self.tab7 = CharacterTab(self, self.config, "Eight")
+        self.tab8 = CharacterTab(self, self.config, "Nine")
+        self.tab9 = CharacterTab(self, self.config, "Ten")
         self.tab_widget1 = QTabWidget()
         self.tab_widget1.addTab(self.tab0, "One")
         self.tab_widget1.addTab(self.tab1, "Two")
@@ -147,14 +147,36 @@ class CombatModelerWindow(QWidget):
 
 
 class CharacterTab(QWidget):
-    def __init__(self, parent, config):
+    def __init__(self, parent, config, name):
         super().__init__(parent)
         self.config = config
 
+        # Create character assigned to this tab.
+        default_name = name
+        default_combat_role = config['Combat Roles'][0]
+        default_combat_stance = config['Combat Stances'][0]
+        default_difficulty = config['Relative Difficulty'][0]
+        if config['Combat Role Variations'] is not None:
+            default_role_variant = config['Combat Role Variations'][0]
+        else:
+            default_role_variant = None
+        if config['Surges and Lulls'] is not None:
+            default_level = INDIVIDUAL_LEVEL[0]
+        else:
+            default_level = None
+        self.character = Character(name = default_name,
+                                   combat_role=default_combat_role,
+                                   combat_stance=default_combat_stance,
+                                   difficulty=default_difficulty,
+                                   role_variant=default_role_variant,
+                                   individual_level=default_level)
+
+        # Set up tab layout and widget content.
         self.layout = QGridLayout()
         self.tab_name_label = QLabel("Set Name:")
         self.layout.addWidget(self.tab_name_label, 0, 0)
         self.name_input = QLineEdit(self)
+        self.name_input.setText(default_name)
         self.layout.addWidget(self.name_input, 0, 1)
 
         # Create Combat Role ComboBox.

@@ -41,7 +41,7 @@ class Character:
         self.combat_targeting_table = None
         self.combat_status = 'Normal'
         self.create_table_names()
-        # print(f"__init__: {self}")
+        print(f"__init__: {self}")
 
     def clear_combat(self):
         """This method is required to clear the combat values when the
@@ -71,7 +71,7 @@ class Character:
         self.level = individual_level
         self.clear_combat()
         self.create_table_names()
-        # print(f"update_status: {self}")
+        print(f"update_status: {self}")
 
     def create_table_names(self):
         """This method sets the Action and Targeting combat table names. It also
