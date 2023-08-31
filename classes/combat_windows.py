@@ -177,7 +177,6 @@ class CharacterTab(QWidget):
         self.layout.addWidget(self.tab_name_label, 0, 0)
         self.name_input = QLineEdit(self)
         self.name_input.setText(self.name)
-        self.name_input.textEdited.connect(self.update_character)
         self.layout.addWidget(self.name_input, 0, 1)
 
         # Create Combat Role ComboBox.
@@ -198,33 +197,33 @@ class CharacterTab(QWidget):
 
         # Create Combat Difficulty ComboBox.
         self.difficulty_label = QLabel("Encounter Difficulty:")
-        self.layout.addWidget(self.difficulty_label)
+        self.layout.addWidget(self.difficulty_label, 3, 0)
         self.difficulty_cbox = QComboBox()
         for item in self.config['Relative Difficulty']:
             self.difficulty_cbox.addItem(item)
-        self.layout.addWidget(self.difficulty_cbox)
+        self.layout.addWidget(self.difficulty_cbox, 3, 1)
 
         # Create Combat Role Variant ComboBox.
         self.combat_role_variant_label = QLabel("Role Variants:")
-        self.layout.addWidget(self.combat_role_variant_label, 3, 0)
+        self.layout.addWidget(self.combat_role_variant_label, 4, 0)
         if config['Combat Role Variations']:
             self.combat_role_variant_cbox = QComboBox()
             for item in self.config['Combat Role Variations']:
                 self.combat_role_variant_cbox.addItem(item)
         else:
             self.combat_role_variant_cbox = QLabel("Not configured")
-        self.layout.addWidget(self.combat_role_variant_cbox, 3, 1)
+        self.layout.addWidget(self.combat_role_variant_cbox, 4, 1)
 
         # Create Combat Surges and Lulls ComboBox.
         self.combat_surge_lull_label = QLabel("Surges and/or Lulls:")
-        self.layout.addWidget(self.combat_surge_lull_label, 4, 0)
+        self.layout.addWidget(self.combat_surge_lull_label, 5, 0)
         if config['Surges and Lulls']:
             self.combat_surge_lull_cbox = QComboBox()
             for item in self.config['Surges and Lulls']:
                 self.combat_surge_lull_cbox.addItem(item)
         else:
             self.combat_surge_lull_cbox = QLabel("Not configured")
-        self.layout.addWidget(self.combat_surge_lull_cbox, 4, 1)
+        self.layout.addWidget(self.combat_surge_lull_cbox, 5, 1)
 
         self.setLayout(self.layout)
 
