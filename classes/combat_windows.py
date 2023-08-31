@@ -225,6 +225,11 @@ class CharacterTab(QWidget):
             self.combat_surge_lull_cbox = QLabel("Not configured")
         self.layout.addWidget(self.combat_surge_lull_cbox, 5, 1)
 
+        # Create tab button to update character data for the tab.
+        self.update_button = QPushButton("Update Character")
+        self.update_button.clicked.connect(self.update_character)
+        self.layout.addWidget(self.update_button, 7, 0)
+
         self.setLayout(self.layout)
 
     def update_character(self):
