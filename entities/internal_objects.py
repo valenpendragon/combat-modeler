@@ -4,6 +4,7 @@ import pandas as pd
 import random
 
 COMBAT_TABLES = '../data/combat-tables.xlsx'
+COMBAT_STATUSES = ['Normal', 'Minor Surge', 'Major Surge', 'Minor Lull', 'Major Lull']
 
 
 class Character:
@@ -38,8 +39,9 @@ class Character:
         self.combat_action_table = None
         self.combat_targeting_table_name = None
         self.combat_targeting_table = None
+        self.combat_status = 'Normal'
         self.create_table_names()
-        print(f"__init__: {self}")
+        # print(f"__init__: {self}")
 
     def clear_combat(self):
         """This method is required to clear the combat values when the
@@ -51,7 +53,8 @@ class Character:
         self.combat_action_table = None
         self.combat_targeting_table_name = None
         self.combat_targeting_table = None
-        print(f"clear_combat: {self}")
+        self.combat_status = 'Normal'
+        # print(f"clear_combat: {self}")
 
     def update_status(self, name,  combat_role, combat_stance, difficulty,
                       role_variant=None, individual_level=None):
@@ -68,7 +71,7 @@ class Character:
         self.level = individual_level
         self.clear_combat()
         self.create_table_names()
-        print(f"update_status: {self}")
+        # print(f"update_status: {self}")
 
     def create_table_names(self):
         """This method sets the Action and Targeting combat table names. It also
@@ -83,7 +86,7 @@ class Character:
         self.combat_targeting_table_name = targeting_table_name
         self.combat_action_table = self.load_table(action_table_name)
         self.combat_targeting_table = self.load_table(targeting_table_name)
-        print(f"create_table_names: {self}")
+        # print(f"create_table_names: {self}")
 
     @staticmethod
     def load_table(table_name, combat_tables=COMBAT_TABLES):
@@ -96,14 +99,14 @@ class Character:
         xls = pd.ExcelFile(combat_tables)
         worksheet_name = table_name[:31]
         table = pd.read_excel(xls, worksheet_name)
-        print(f"load_table: {table}")
+        # print(f"load_table: {table}")
         return table
 
     def __str__(self):
         output = f"Name: {self.name}. Role: {self.combat_role}.\n" \
                  f"Stance: {self.combat_stance}. Difficulty: {self.difficulty}.\n" \
                  f"Role Variant: {self.role_variant}. Level: {self.level}.\n" \
-                 f"Target: {self.target}. Action: {self.action}.\n" \
+                 f"Status: {self.combat_status}. Target: {self.target}. Action: {self.action}.\n" \
                  f"Action Table Name: {self.combat_action_table_name}.\n" \
                  f"Targeting Table Name: {self.combat_targeting_table_name}.\n" \
                  f"Action Table: {self.combat_action_table}\n" \
@@ -127,10 +130,22 @@ class Character:
             print(f"KeyError discovered in table using {difficulty}")
             print(f"Could not complete task.")
             return
-        print(f"action table: {table}")
+        # print(f"action table: {table}")
         filtered_table = table[table[difficulty] != '-']
-        print(f"filtered action table: {filtered_table}")
+        # print(f"filtered action table: {filtered_table}")
         self.action = self.determine_result_from_table(filtered_table, difficulty)
+
+        # Generally, 'Normal' is not included in action outcomes. So, just in case,
+        # the status_flag tracks changes that were included in the action outcome.
+        # If none are found, it will default to 'Normal'.
+        status_flag = False
+        for status in COMBAT_STATUSES:
+            if status.lower() in self.action.lower():
+                self.combat_status = status
+                status_flag = True
+        if not status_flag:
+            self.combat_status = 'Normal'
+        print(f"roll_for_combat_action: {self}")
 
     def roll_for_combat_targeting(self):
         """This method finds the minimum and maximum values in the combat targeting table,
@@ -149,10 +164,11 @@ class Character:
             print(f"KeyError discovered in table using {difficulty}")
             print(f"Could not complete task.")
             return
-        print(f"target table: {table}")
+        # print(f"target table: {table}")
         filtered_table = table[table[difficulty] != '-']
-        print(f"filtered target table: {filtered_table}")
+        # print(f"filtered target table: {filtered_table}")
         self.target = self.determine_result_from_table(filtered_table, difficulty)
+        print(f"roll_for_combat_targeting: {self}")
 
     def determine_result_from_table(self, filtered_table, difficulty):
         """
@@ -167,22 +183,22 @@ class Character:
         :return: str
         """
         print(f"determine_result_from_table: starting process")
-        print(f"filtered table: {filtered_table}")
+        # print(f"filtered table: {filtered_table}")
         min_entry = filtered_table.iloc[0, 0]
         min_val = int(min_entry.split('-')[0])
         max_entry = filtered_table.iloc[-1, 0]
         max_val = self.return_int_from_table_item(max_entry)
         roll = random.randint(min_val, max_val)
-        print(f"min: {min_val}. max: {max_val}. roll: {roll}")
+        # print(f"min: {min_val}. max: {max_val}. roll: {roll}")
 
         series = filtered_table[difficulty]
         idx = 0
         for item in series:
             list_values = item.split('-')
-            print(f"idx: {idx}. item: {item}. list_values: {list_values}")
+            # print(f"idx: {idx}. item: {item}. list_values: {list_values}")
             comp_val = self.return_int_from_table_item(item)
             result = filtered_table['Outcome'].iloc[idx]
-            print(f"comp_val: {comp_val}. roll: {roll} result: {result}")
+            # print(f"comp_val: {comp_val}. roll: {roll} result: {result}")
             if roll > comp_val:
                 idx += 1
                 continue
@@ -223,24 +239,21 @@ if __name__ == "__main__":
     character = Character(name, role, stance, difficulty, role_variant, level)
     print(f"main: {character}")
     character.roll_for_combat_targeting()
-    print(f"target: {character.target}")
     character.roll_for_combat_action()
-    print(f"action: {character.action}")
+    print(f"main: post-rolls: {character}")
     print(f"main: Second pass after reinforcements arrive and the Knight is injured.")
     character.update_status(name, combat_role='Brute', combat_stance='Bloodied',
                             difficulty='B', role_variant='Minion',
                             individual_level='Low')
     print(f"main: Second pass: {character}")
     character.roll_for_combat_targeting()
-    print(f"target: {character.target}")
     character.roll_for_combat_action()
-    print(f"action: {character.action}")
+    print(f"main: post-rolls: {character}")
     print(f"main: Third pass: Knight has been healed up for most of their injuries.")
     character.update_status(name, combat_role='Skirmisher', combat_stance='Fresh',
                             difficulty='D', role_variant='Minion',
                             individual_level='Moderate')
     print(f"main: Third pass: {character}")
     character.roll_for_combat_targeting()
-    print(f"target: {character.target}")
     character.roll_for_combat_action()
-    print(f"action: {character.action}")
+    print(f"main: post-rolls: {character}")
