@@ -7,6 +7,7 @@ import sys
 import os
 
 CONFIGURATION_FILEPATH = './data/configuration-tables.xlsx'
+COMBAT_TABLES_FILEPATH = './data/combat-tables.xlsx'
 REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
                        'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
@@ -15,7 +16,16 @@ OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls'
 class StartupWindow(QMainWindow):
     def __init__(self, filepath=CONFIGURATION_FILEPATH):
         super().__init__()
+        # Initialize to None the attributes handled by methods:
+        # init_ui(), load_configuration_tables(), start_configuration_window()
+        # and start_combat_window().
         self.config_path = filepath
+        self.vbox = None
+        self.statusbar = None
+        self.required_config_dfs = None
+        self.optional_config_dfs = None
+        self.config_window = None
+        self.combat_window = None
         self.init_ui()
         self.load_configuration_tables()
 
@@ -75,9 +85,9 @@ class StartupWindow(QMainWindow):
             self.statusbar.addWidget(config_not_found_label)
 
     def show_configuration_tables(self):
-        config_window = ConfigurationWindow(self.required_config_dfs,
-                                            self.optional_config_dfs)
-        config_window.exec()
+        self.config_window = ConfigurationWindow(self.required_config_dfs,
+                                                 self.optional_config_dfs)
+        self.config_window.exec()
 
     def start_combat_window(self):
         self.combat_window = CombatModelerWindow(self.required_config_dfs,

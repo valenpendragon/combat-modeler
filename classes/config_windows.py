@@ -58,32 +58,45 @@ class ConfigurationWindow(QDialog):
         self.layout.addWidget(self.combat_lulls_button)
         self.layout.addWidget(self.close_button)
 
-    def show_combat_data(self, title):
+    def show_required_combat_data(self, title):
         data = self.required_config_dfs[title]
         print(f"data: {data}")
         dialog = ConfigDisplayDialog(title, data)
         dialog.exec()
 
+    def show_optional_combat_data(self, title):
+        data = self.optional_config_dfs[title]
+        print(f"data: {data}")
+        if data is None:
+            dialog = QMessageBox()
+            dialog.setText(f"{title} is not configured in the files in data.")
+            dialog.setWindowTitle("Configuration does not exist")
+            dialog.setStandardButtons(QMessageBox.Cancel)
+            dialog.exec()
+        else:
+            dialog = ConfigDisplayDialog(title, data)
+            dialog.exec()
+
     def show_combat_outcomes(self):
-        self.show_combat_data("Combat Outcomes")
+        self.show_required_combat_data("Combat Outcomes")
 
     def show_combat_roles(self):
-        self.show_combat_data("Combat Roles")
+        self.show_required_combat_data("Combat Roles")
 
     def show_combat_stances(self):
-        self.show_combat_data("Combat Stances")
+        self.show_required_combat_data("Combat Stances")
 
     def show_combat_targeting(self):
-        self.show_combat_data("Combat Targeting Summary")
+        self.show_required_combat_data("Combat Targeting Summary")
 
     def show_combat_role_variants(self):
-        self.show_combat_data("Combat Role Variations")
+        self.show_optional_combat_data("Combat Role Variations")
 
     def show_combat_surges(self):
-        self.show_combat_data("Combat Surges")
+        self.show_optional_combat_data("Combat Surges")
 
     def show_combat_lulls(self):
-        self.show_combat_data("Combat Lulls")
+        self.show_optional_combat_data("Combat Lulls")
 
 
 class ConfigDisplayDialog(QDialog):

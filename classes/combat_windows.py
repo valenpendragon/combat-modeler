@@ -9,7 +9,7 @@ import sys
 import os
 import datetime
 
-CONFIGURATION_FILEPATH = '../data/configuration-tables.xlsx'
+CONFIGURATION_FILEPATH = './data/configuration-tables.xlsx'
 REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
                        'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
@@ -364,6 +364,7 @@ class CharacterTab(QWidget):
 
 
 if __name__ == "__main__":
+    CONFIGURATION_FILEPATH = '../data/configuration-tables.xlsx'
     sys.argv += ['-platform', 'windows:darkmode=2']
     app = QApplication(sys.argv)
     app.setStyle('Fusion')

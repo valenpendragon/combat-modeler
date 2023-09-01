@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import random
 
-COMBAT_TABLES = '../data/combat-tables.xlsx'
+COMBAT_TABLES_FILEPATH = './data/combat-tables.xlsx'
 COMBAT_STATUSES = ['Normal', 'Minor Surge', 'Major Surge', 'Minor Lull', 'Major Lull']
 
 
@@ -89,7 +89,7 @@ class Character:
         # print(f"create_table_names: {self}")
 
     @staticmethod
-    def load_table(table_name, combat_tables=COMBAT_TABLES):
+    def load_table(table_name, combat_tables=COMBAT_TABLES_FILEPATH):
         """This method extracts the required table from COMBAT_TABLES and returns
         it. Note: Excel limits worksheet names to 31 characters.
         :param table_name: str, required
@@ -229,6 +229,7 @@ class Character:
 
 
 if __name__ == "__main__":
+    COMBAT_TABLES_FILEPATH = '../data/combat-tables.xlsx'
     print("main: First pass:")
     name = "Holy Knight"
     role = "Skirmisher"
