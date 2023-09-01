@@ -35,6 +35,7 @@ class CombatModelerWindow(QWidget):
         print(f"config: {self.config}")
         print(f"combat_surges: {self.combat_surges}")
         print(f"combat_lulls: {self.combat_lulls}")
+        self.event_counter = 0
 
         # Create tabs
         self.tab0 = CharacterTab(self, self.config, "One")
@@ -115,6 +116,8 @@ class CombatModelerWindow(QWidget):
 
     def run_simulation(self):
         ctr = 0
+        self.text_display.append(
+            f"<h2>Beginning Event {self.event_counter}</h2>")
         for i in range(self.tab_widget1.count()):
             if self.tab_widget1.widget(i).status:
                 # Generate an action and a target.
@@ -172,6 +175,9 @@ class CombatModelerWindow(QWidget):
                 ctr += 1
             else:
                 continue
+        self.text_display.append(
+            f"<h3>End of Event {self.event_counter}</h3>")
+        self.event_counter += 1
 
         if ctr == 0:
             self.text_display.append(f"<p><b>No tabs are active currently.</b></p>")
