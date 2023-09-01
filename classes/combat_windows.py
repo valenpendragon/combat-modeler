@@ -124,9 +124,21 @@ class CombatModelerWindow(QWidget):
                 name = self.tab_widget1.widget(i).character.name
                 action = self.tab_widget1.widget(i).character.action
                 target = self.tab_widget1.widget(i).character.target
+                level = self.tab_widget1.widget(i).character.level
 
                 self.text_display.append(
                     f"<p>{name} targets {target} with {action}</p>")
+
+                # Handling surges and lulls.
+                if 'Surge' in action:
+                    surge_result = self.get_surge_or_lull_result(
+                        action, level, 'surge', self.combat_surges)
+                    self.text_display.append(f"<b>{surge_result}.")
+                elif "Lull" in action:
+                    lull_result = self.get_surge_or_lull_result(
+                        action, level, 'lull', self.combat_lulls)
+                    self.text_display.append(f"<b>{lull_result}.")
+
                 ctr += 1
             else:
                 continue
@@ -135,17 +147,52 @@ class CombatModelerWindow(QWidget):
             if self.tab_widget2.widget(i).status:
                 self.tab_widget2.widget(i).character.roll_for_combat_action()
                 self.tab_widget2.widget(i).character.roll_for_combat_targeting()
-                # Do an abbreviation check here later in development.
+
+                # Pull out the data needed.
                 name = self.tab_widget2.widget(i).character.name
                 action = self.tab_widget2.widget(i).character.action
                 target = self.tab_widget2.widget(i).character.target
-                self.text_display.append(f"<p>{name} targets {target} with {action}</p>")
+                level = self.tab_widget1.widget(i).character.level
+
+                self.text_display.append(
+                    f"<p>{name} targets {target} with {action}</p>")
+
+                # Handling surges and lulls.
+                # Handling surges and lulls.
+                if 'Surge' in action:
+                    surge_result = self.get_surge_or_lull_result(
+                        action, level, 'surge', self.combat_surges)
+                    self.text_display.append(f"<b>{surge_result}.")
+                elif "Lull" in action:
+                    lull_result = self.get_surge_or_lull_result(
+                        action, level, 'lull', self.combat_lulls)
+                    self.text_display.append(f"<b>{lull_result}.")
+
                 ctr += 1
             else:
                 continue
 
         if ctr == 0:
             self.text_display.append(f"<p><b>No tabs are active currently.</b></p>")
+
+    @staticmethod
+    def get_surge_or_lull_result(action, level, event_type, table):
+        event = event_type.title()
+        action_list = action.split('/')
+        effect_list = action_list[1].split(' ')
+        actual_action = action_list[0].strip()
+        effect_level = effect_list[0]
+        print(f"actual_action: {actual_action}. surge_level: {effect_level}")
+        table_col = f"{effect_level} {level}"
+        series = table["Outcome"]
+        mask = (series == actual_action)
+        surge_row = series.index[mask]
+        print(f"surge_col: {table_col}. surge_row: {surge_row}")
+        result = str(table.loc[surge_row][table_col])
+        # Strip off leading index.
+        result = result[2:]
+        result = result.split('Name')[0]
+        return f"{effect_level} {event}: {result}"
 
     def clear_tabs(self):
         """Reinitialize the window."""
