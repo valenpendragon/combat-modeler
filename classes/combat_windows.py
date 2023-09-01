@@ -122,15 +122,9 @@ class CombatModelerWindow(QWidget):
 
                 # Pull out the data that is needed.
                 name = self.tab_widget1.widget(i).character.name
-                prov_action = self.tab_widget1.widget(i).character.action
+                action = self.tab_widget1.widget(i).character.action
                 target = self.tab_widget1.widget(i).character.target
 
-                # prov_action may start with an abbreviation.
-                action_item = self.check_for_abbrev(prov_action)
-                if action_item is not None:
-                    action = prov_action.replace(action_item[0], action_item[1])
-                else:
-                    action = prov_action
                 self.text_display.append(
                     f"<p>{name} targets {target} with {action}</p>")
                 ctr += 1
