@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QPushButton, QFileDialog,
 from entities import PandasModel, Character
 import sys
 import os
+import datetime
 
 CONFIGURATION_FILEPATH = '../data/configuration-tables.xlsx'
 REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
@@ -318,10 +319,13 @@ class CharacterTab(QWidget):
         self.layout.addWidget(self.toggle_active_button, 6, 0)
         self.layout.addWidget(self.status_label, 6, 1)
 
-        # Create tab button to update character data for the tab.
+        # Create tab button to update character data for the tab and
+        # a label it can use to write when the last update occurred.
         self.update_button = QPushButton("Update Character")
         self.update_button.clicked.connect(self.update_character)
+        self.update_label = QLabel()
         self.layout.addWidget(self.update_button, 7, 0)
+        self.layout.addWidget(self.update_label, 7, 1)
 
         self.setLayout(self.layout)
 
@@ -342,6 +346,10 @@ class CharacterTab(QWidget):
                                      difficulty=self.difficulty,
                                      role_variant=self.role_variant,
                                      individual_level=self.level)
+        time = datetime.datetime.now()
+        time_str = "%d/%m/%y %H:%M"
+        update_text = f"{self.name} updated at {time.strftime(time_str)}"
+        self.update_label.setText(update_text)
 
     def toggle_status(self):
         """This status determines whether or not the character will be used
