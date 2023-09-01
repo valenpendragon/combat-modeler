@@ -21,7 +21,6 @@ class CombatModelerWindow(QWidget):
         super().__init__(parent)
         self.setMinimumSize(800, 600)
         self.setWindowTitle("Combat Modeler")
-        self.combat_action_abbrev = None
 
         mainLayout = QGridLayout()
 
@@ -35,7 +34,6 @@ class CombatModelerWindow(QWidget):
         print(f"config: {self.config}")
         print(f"combat_surges: {self.combat_surges}")
         print(f"combat_lulls: {self.combat_lulls}")
-        self.create_combat_action_abbrev()
 
         # Create tabs
         self.tab0 = CharacterTab(self, self.config, "One")
@@ -118,13 +116,23 @@ class CombatModelerWindow(QWidget):
         ctr = 0
         for i in range(self.tab_widget1.count()):
             if self.tab_widget1.widget(i).status:
+                # Generate an action and a target.
                 self.tab_widget1.widget(i).character.roll_for_combat_action()
                 self.tab_widget1.widget(i).character.roll_for_combat_targeting()
-                # Do an abbreviation check here later in development.
+
+                # Pull out the data that is needed.
                 name = self.tab_widget1.widget(i).character.name
-                action = self.tab_widget1.widget(i).character.action
+                prov_action = self.tab_widget1.widget(i).character.action
                 target = self.tab_widget1.widget(i).character.target
-                self.text_display.append(f"<p>{name} targets {target} with {action}</p>")
+
+                # prov_action may start with an abbreviation.
+                action_item = self.check_for_abbrev(prov_action)
+                if action_item is not None:
+                    action = prov_action.replace(action_item[0], action_item[1])
+                else:
+                    action = prov_action
+                self.text_display.append(
+                    f"<p>{name} targets {target} with {action}</p>")
                 ctr += 1
             else:
                 continue
@@ -179,22 +187,6 @@ class CombatModelerWindow(QWidget):
 
     def close_simulator(self):
         self.close()
-
-    def create_combat_action_abbrev(self):
-        """This method extracts the abbreviation from Combat Outcomes so
-        they can be displayed properly in the combat text feed."""
-        abbrev = []
-        data = self.config["Combat Outcomes"]
-        for item in data:
-            title = item.split(' ')
-            s = ''
-            if title == 1:
-                abbrev.append(item[0:2].upper())
-            else:
-                for word in title:
-                    s += word[0]
-                abbrev.append(s)
-        self.combat_action_abbrev = abbrev
 
 
 class CharacterTab(QWidget):

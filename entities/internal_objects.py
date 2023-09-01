@@ -41,7 +41,7 @@ class Character:
         self.combat_targeting_table = None
         self.combat_status = 'Normal'
         self.create_table_names()
-        print(f"__init__: {self}")
+        # print(f"__init__: {self}")
 
     def clear_combat(self):
         """This method is required to clear the combat values when the
@@ -71,7 +71,7 @@ class Character:
         self.level = individual_level
         self.clear_combat()
         self.create_table_names()
-        print(f"update_status: {self}")
+        # print(f"update_status: {self}")
 
     def create_table_names(self):
         """This method sets the Action and Targeting combat table names. It also
@@ -157,7 +157,7 @@ class Character:
         for item in self.combat_targeting_table.columns:
             if item.strip() == self.difficulty:
                 difficulty = item
-                print(f"difficulty changed from {self.difficulty} to {difficulty}")
+                # print(f"difficulty changed from {self.difficulty} to {difficulty}")
         try:
             table = self.combat_targeting_table[[difficulty,'Outcome']]
         except KeyError:
@@ -168,7 +168,7 @@ class Character:
         filtered_table = table[table[difficulty] != '-']
         # print(f"filtered target table: {filtered_table}")
         self.target = self.determine_result_from_table(filtered_table, difficulty)
-        print(f"roll_for_combat_targeting: {self}")
+        # print(f"roll_for_combat_targeting: {self}")
 
     def determine_result_from_table(self, filtered_table, difficulty):
         """
