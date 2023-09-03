@@ -11,6 +11,8 @@ COMBAT_TABLES_FILEPATH = './data/combat-tables.xlsx'
 REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
                        'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
+DIFFICULTY_VARIATIONS = ['A', 'B', 'C', 'D']
+INDIVIDUAL_LEVEL = ['Low', 'Moderate', 'Advanced', 'Elite']
 
 
 class StartupWindow(QMainWindow):
@@ -28,6 +30,7 @@ class StartupWindow(QMainWindow):
         self.combat_window = None
         self.init_ui()
         self.load_configuration_tables()
+        self.validate_tables()
 
     def init_ui(self):
         self.setWindowTitle('Combat Modeler')
@@ -81,8 +84,71 @@ class StartupWindow(QMainWindow):
             print(f"optional_config_dfs: {self.optional_config_dfs}")
 
         else:
-            config_not_found_label = QLabel('Required Configuration file, configuration-tables.xlsx not found in /data')
-            self.statusbar.addWidget(config_not_found_label)
+            QMessageBox.critical(self, 'Fatal Error',
+                                 'Required Configuration file, configuration-tables.xlsx not found in /data')
+
+    def validate_tables(self):
+        # One error is enough to stop this software from working properly.
+        # str.strip() is used to reduce the impact of typos in header columns.
+        for title in self.required_config_dfs.keys():
+            errors = 0
+            worksheet = self.required_config_dfs[title]
+            if len(worksheet.columns) != 2:
+                errors += 1
+            if worksheet.columns[1].strip() != 'Description':
+                errors += 1
+            if title == "Combat Outcomes" or title == "Combat Targeting Summary":
+                if worksheet.columns[0].strip() != 'Outcome':
+                    errors += 1
+            elif title == "Combat Roles" or title == "Combat Stances":
+                if worksheet.columns[0].strip() != 'Role':
+                    errors += 1
+            else:
+                # There is an extra table loaded that is not required.
+                errors += 1
+            for col in worksheet.columns:
+                for idx in worksheet.index:
+                    if not isinstance(worksheet[col][idx], str):
+                        errors += 1
+            if errors > 0:
+                error_msg = f"Format of required configuration worksheet, {title}, is invalid."
+                QMessageBox.critical(self, 'Fatal Error', error_msg)
+
+        for title in self.optional_config_dfs.keys():
+            errors = 0
+            if self.optional_config_dfs[title] is None:
+                continue
+            else:
+                worksheet = self.optional_config_dfs[title]
+                if title == "Combat Role Variations":
+                    if len(worksheet.columns) != 2:
+                        errors += 1
+                    else:
+                        df_cols = [col.strip() for col in worksheet.columns]
+                        if df_cols != ['Role Variant', 'Description']:
+                            errors += 1
+                    for col in worksheet.columns:
+                        for idx in worksheet.index:
+                            if not isinstance(worksheet[col][idx], str):
+                                errors += 1
+                else:
+                    # This is either a Combat Surges or Lulls table.
+                    # Construct the list of columns.
+                    cols = ['Outcome']
+                    min_lvls = [f"Minor {level}" for level in INDIVIDUAL_LEVEL]
+                    maj_lvls = [f"Major {level}" for level in INDIVIDUAL_LEVEL]
+                    cols.extend(min_lvls)
+                    cols.extend(maj_lvls)
+                    df_cols = [col.strip() for col in worksheet.columns]
+                    if cols != df_cols:
+                        errors += 1
+                    for col in worksheet.columns:
+                        for idx in worksheet.index:
+                            if not isinstance(worksheet[col][idx], str):
+                                errors += 1
+            if errors > 0:
+                error_msg = f"Format of optional configuration worksheet, {title}, is invalid."
+                QMessageBox.critical(self, 'Fatal Error', error_msg)
 
     def show_configuration_tables(self):
         self.config_window = ConfigurationWindow(self.required_config_dfs,
