@@ -1,10 +1,13 @@
 import sys
 import os
+import time
+
 import pandas as pd
 import random
 
 COMBAT_TABLES_FILEPATH = './data/combat-tables.xlsx'
 COMBAT_STATUSES = ['Normal', 'Minor Surge', 'Major Surge', 'Minor Lull', 'Major Lull']
+DIFFICULTY_VARIATIONS = ['A', 'B', 'C', 'D']
 
 
 class Character:
@@ -86,7 +89,84 @@ class Character:
         self.combat_targeting_table_name = targeting_table_name
         self.combat_action_table = self.load_table(action_table_name)
         self.combat_targeting_table = self.load_table(targeting_table_name)
+        self.validate_tables()
         # print(f"create_table_names: {self}")
+
+    def validate_tables(self):
+        """This method ensures that the combat action and targeting tables will
+        be usable by this program. Other classes that use this will need to respond
+        to a self.combat_action_table or self.combat_targeting_table being set to
+        "invalid"."""
+        action_table = self.combat_action_table
+        targeting_table = self.combat_targeting_table
+        action_cols = [col.strip() for col in action_table.columns]
+        target_cols = [col.strip() for col in targeting_table.columns]
+        cols = DIFFICULTY_VARIATIONS.copy()
+        print(f"validate_tables: cols: {cols}. Difficulty Variations: {DIFFICULTY_VARIATIONS}")
+        cols.append('Outcome')
+        print(f"validate_tables: cols: {cols}")
+        errors = 0
+        if cols != action_cols:
+            print(f"validate_tables: cols: {cols}. action_cols: {action_cols}")
+            self.combat_action_table = "invalid"
+            errors += 1
+        if cols != target_cols:
+            print(f"validate_tables: cols: {cols}. target_cols: {target_cols}")
+            self.combat_targeting_table = "invalid"
+            errors += 1
+        if errors != 0:
+            return
+
+        # The columns of the tables are correct or an approximate match.
+        # Now, the contents of each columns need to checked. Columns A through
+        # D (columns[0] to columns[3) must contain one of the following: a dash
+        # "-" string for not applicable, a string or integer that can contain
+        # leading zeros or be composed of zeros, or two integers connected by a
+        # dash "-" character indicating a range of values. The left value must be
+        # less than or equal to the right value. The fifth column is a string.
+        for n in range(0, 4):
+            action_series = action_table[action_table.columns[n]]
+            target_series = targeting_table[targeting_table.columns[n]]
+            for item in action_series:
+                if not self.check_item(item):
+                    self.combat_action_table = "invalid"
+                    errors += 1
+            for item in target_series:
+                if not self.check_item(item):
+                    self.combat_targeting_table = "invalid"
+                    errors += 1
+            if errors != 0:
+                return
+
+    @staticmethod
+    def check_item(item: str) -> bool:
+        """This static method checks a string to see if the format is correct for
+        combat action or targeting tables. It returns True if so, False if not."""
+        print(f"check_item: item: {item}")
+        if item == "-":
+            return True
+        l = item.split('-')
+        print(f"check_item: l: {l}.")
+        if len(l) > 2:
+            return False
+        elif len(l) == 2:
+            try:
+                low = int(l[0])
+                high = int(l[1])
+                print(f"check_item: low: {low}. high: {high}.")
+            except ValueError:
+                return False
+            if low > high:
+                return high == 0
+            else:
+                return True
+        else:
+            try:
+                low = int(l[0])
+                print(f"check_item: low: {low}.")
+            except ValueError:
+                return False
+        return True
 
     @staticmethod
     def load_table(table_name, combat_tables=COMBAT_TABLES_FILEPATH):

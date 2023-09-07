@@ -86,7 +86,32 @@ class CombatModelerWindow(QWidget):
 
         self.setLayout(mainLayout)
 
-    def extract_dropdown_lists(self, required_config_dfs, optional_config_dfs):
+        # Checking the results of the validations.
+        self.check_table_validation()
+
+    def check_table_validation(self):
+        for i in range(self.tab_widget1.count()):
+            # We cannot use a truth value on a dataframe. So, we have to check instead to
+            # if it is a str instead of a pd.DataFrame.
+            if isinstance(self.tab_widget1.widget(i).character.combat_targeting_table, str):
+                self.generate_error_dialog(
+                    self.tab_widget1.widget(i).character.combat_targeting_table_name)
+            if isinstance(self.tab_widget1.widget(i).character.combat_action_table, str):
+                self.generate_error_dialog(
+                    self.tab_widget1.widget(i).character.combat_action_table_name)
+            if isinstance(self.tab_widget2.widget(i).character.combat_targeting_table, str):
+                self.generate_error_dialog(
+                    self.tab_widget2.widget(i).character.combat_targeting_table_name)
+            if isinstance(self.tab_widget2.widget(i).character.combat_action_table, str):
+                self.generate_error_dialog(
+                    self.tab_widget2.widget(i).character.combat_action_table_name)
+
+    def generate_error_dialog(self, table_name):
+        error_msg = f"Combat {table_name} has invalid formatting."
+        QMessageBox.critical(self, 'Fatal Error', error_msg)
+
+    @staticmethod
+    def extract_dropdown_lists(required_config_dfs, optional_config_dfs):
         """
         This method requires two dictionaries of dataframes. Elements of the optional
         configs will be None. From both dictionaries, it will extract a dictionary of
@@ -226,6 +251,9 @@ class CombatModelerWindow(QWidget):
         self.tab_widget2.addTab(self.tab7, "Eight")
         self.tab_widget2.addTab(self.tab8, "Nine")
         self.tab_widget2.addTab(self.tab9, "Ten")
+
+        # Checking the results of the validations.
+        self.check_table_validation()
 
     def save_tab_data(self):
         pass
