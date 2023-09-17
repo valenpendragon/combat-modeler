@@ -83,8 +83,12 @@ class Character:
         role = self.combat_role
         stance = self.combat_stance
         role_variant = self.role_variant
-        action_table_name = f"{role} {role_variant} {stance} Action"
-        targeting_table_name = f"{role} {role_variant} {stance} Targeting"
+        if role_variant:
+            action_table_name = f"{role} {role_variant} {stance} Action"
+            targeting_table_name = f"{role} {role_variant} {stance} Targeting"
+        else:
+            action_table_name = f"{role} {stance} Action"
+            targeting_table_name = f"{role} {stance} Targeting"
         self.combat_action_table_name = action_table_name
         self.combat_targeting_table_name = targeting_table_name
         self.combat_action_table = self.load_table(action_table_name)
@@ -96,7 +100,13 @@ class Character:
         """This method ensures that the combat action and targeting tables will
         be usable by this program. Other classes that use this will need to respond
         to a self.combat_action_table or self.combat_targeting_table being set to
-        "invalid"."""
+        "invalid". It will also stop if the status of the table is already missing.
+        """
+        if isinstance(self.combat_action_table, str):
+            return
+        if isinstance(self.combat_targeting_table, str):
+            return
+
         action_table = self.combat_action_table
         targeting_table = self.combat_targeting_table
         action_cols = [col.strip() for col in action_table.columns]
@@ -174,11 +184,14 @@ class Character:
         it. Note: Excel limits worksheet names to 31 characters.
         :param table_name: str, required
         :param combat_tables: filepath, optional, defaults to COMBAT_TABLES
-        :return pd.DataFrame
+        :return pd.DataFrame or str
         """
         xls = pd.ExcelFile(combat_tables)
         worksheet_name = table_name[:31]
-        table = pd.read_excel(xls, worksheet_name)
+        try:
+            table = pd.read_excel(xls, worksheet_name)
+        except ValueError:
+            return "missing"
         # print(f"load_table: {table}")
         return table
 
@@ -309,7 +322,7 @@ class Character:
 
 
 if __name__ == "__main__":
-    COMBAT_TABLES_FILEPATH = '../data/combat-tables.xlsx'
+    COMBAT_TABLES_FILEPATH = '../data_orig/combat-tables.xlsx'
     print("main: First pass:")
     name = "Holy Knight"
     role = "Skirmisher"

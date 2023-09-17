@@ -60,16 +60,16 @@ class ConfigurationWindow(QDialog):
 
     def show_required_combat_data(self, title):
         data = self.required_config_dfs[title]
-        print(f"data: {data}")
+        print(f"data_orig: {data}")
         dialog = ConfigDisplayDialog(title, data)
         dialog.exec()
 
     def show_optional_combat_data(self, title):
         data = self.optional_config_dfs[title]
-        print(f"data: {data}")
+        print(f"data_orig: {data}")
         if data is None:
             dialog = QMessageBox()
-            dialog.setText(f"{title} is not configured in the files in data.")
+            dialog.setText(f"{title} is not configured in the files in data_orig.")
             dialog.setWindowTitle("Configuration does not exist")
             dialog.setStandardButtons(QMessageBox.Cancel)
             dialog.exec()

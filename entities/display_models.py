@@ -39,7 +39,7 @@ class PandasModel(QAbstractTableModel):
                    orientation: Qt.Orientation,
                    role: Qt.ItemDataRole):
         """Override QAbstractTableModel method to return index as vertical
-        header data and columns as horizontal header data."""
+        header data_orig and columns as horizontal header data_orig."""
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
                 return str(self._dataframe.columns[section])

@@ -6,8 +6,8 @@ from classes import ConfigurationWindow, CombatModelerWindow
 import sys
 import os
 
-CONFIGURATION_FILEPATH = './data/configuration-tables.xlsx'
-COMBAT_TABLES_FILEPATH = './data/combat-tables.xlsx'
+CONFIGURATION_FILEPATH = 'data/configuration-tables.xlsx'
+COMBAT_TABLES_FILEPATH = 'data/combat-tables.xlsx'
 REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
                        'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
@@ -85,7 +85,7 @@ class StartupWindow(QMainWindow):
 
         else:
             QMessageBox.critical(self, 'Fatal Error',
-                                 'Required Configuration file, configuration-tables.xlsx not found in /data')
+                                 'Required Configuration file, configuration-tables.xlsx not found in /data_orig')
 
     def validate_tables(self):
         # One error is enough to stop this software from working properly.

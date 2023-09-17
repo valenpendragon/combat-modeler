@@ -107,7 +107,7 @@ class CombatModelerWindow(QWidget):
                     self.tab_widget2.widget(i).character.combat_action_table_name)
 
     def generate_error_dialog(self, table_name):
-        error_msg = f"Combat {table_name} has invalid formatting."
+        error_msg = f"Combat {table_name} has invalid formatting or is missing."
         QMessageBox.critical(self, 'Fatal Error', error_msg)
 
     @staticmethod
@@ -149,7 +149,7 @@ class CombatModelerWindow(QWidget):
                 self.tab_widget1.widget(i).character.roll_for_combat_action()
                 self.tab_widget1.widget(i).character.roll_for_combat_targeting()
 
-                # Pull out the data that is needed.
+                # Pull out the data_orig that is needed.
                 name = self.tab_widget1.widget(i).character.name
                 action = self.tab_widget1.widget(i).character.action
                 target = self.tab_widget1.widget(i).character.target
@@ -177,7 +177,7 @@ class CombatModelerWindow(QWidget):
                 self.tab_widget2.widget(i).character.roll_for_combat_action()
                 self.tab_widget2.widget(i).character.roll_for_combat_targeting()
 
-                # Pull out the data needed.
+                # Pull out the data_orig needed.
                 name = self.tab_widget2.widget(i).character.name
                 action = self.tab_widget2.widget(i).character.action
                 target = self.tab_widget2.widget(i).character.target
@@ -353,7 +353,7 @@ class CharacterTab(QWidget):
         self.layout.addWidget(self.toggle_active_button, 6, 0)
         self.layout.addWidget(self.status_label, 6, 1)
 
-        # Create tab button to update character data for the tab and
+        # Create tab button to update character data_orig for the tab and
         # a label it can use to write when the last update occurred.
         self.update_button = QPushButton("Update Character")
         self.update_button.clicked.connect(self.update_character)
@@ -398,7 +398,7 @@ class CharacterTab(QWidget):
 
 
 if __name__ == "__main__":
-    CONFIGURATION_FILEPATH = '../data/configuration-tables.xlsx'
+    CONFIGURATION_FILEPATH = '../data_orig/configuration-tables.xlsx'
     sys.argv += ['-platform', 'windows:darkmode=2']
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
