@@ -108,20 +108,22 @@ class Character:
             return
 
         action_table = self.combat_action_table
+        action_table_name = self.combat_action_table_name
         targeting_table = self.combat_targeting_table
+        targeting_table_name = self.combat_targeting_table_name
         action_cols = [col.strip() for col in action_table.columns]
         target_cols = [col.strip() for col in targeting_table.columns]
         cols = DIFFICULTY_VARIATIONS.copy()
-        print(f"validate_tables: cols: {cols}. Difficulty Variations: {DIFFICULTY_VARIATIONS}")
         cols.append('Outcome')
-        print(f"validate_tables: cols: {cols}")
         errors = 0
         if cols != action_cols:
             print(f"validate_tables: cols: {cols}. action_cols: {action_cols}")
+            print(f"validate_tables: marking table invalid")
             self.combat_action_table = "invalid"
             errors += 1
         if cols != target_cols:
             print(f"validate_tables: cols: {cols}. target_cols: {target_cols}")
+            print(f"validate_tables: marking table invalid")
             self.combat_targeting_table = "invalid"
             errors += 1
         if errors != 0:
@@ -139,10 +141,12 @@ class Character:
             target_series = targeting_table[targeting_table.columns[n]]
             for item in action_series:
                 if not self.check_item(item):
+                    print(f"validating_tables: item: {item} in table {action_table_name} failed validation")
                     self.combat_action_table = "invalid"
                     errors += 1
             for item in target_series:
                 if not self.check_item(item):
+                    print(f"validating_tables: item: {item} in table {targeting_table_name} failed validation")
                     self.combat_targeting_table = "invalid"
                     errors += 1
             if errors != 0:
@@ -152,18 +156,18 @@ class Character:
     def check_item(item: str) -> bool:
         """This static method checks a string to see if the format is correct for
         combat action or targeting tables. It returns True if so, False if not."""
-        print(f"check_item: item: {item}")
+        # print(f"check_item: item: {item}")
         if item == "-":
             return True
         l = item.split('-')
-        print(f"check_item: l: {l}.")
+        # print(f"check_item: l: {l}.")
         if len(l) > 2:
             return False
         elif len(l) == 2:
             try:
                 low = int(l[0])
                 high = int(l[1])
-                print(f"check_item: low: {low}. high: {high}.")
+                # print(f"check_item: low: {low}. high: {high}.")
             except ValueError:
                 return False
             if low > high:
@@ -173,7 +177,7 @@ class Character:
         else:
             try:
                 low = int(l[0])
-                print(f"check_item: low: {low}.")
+                # print(f"check_item: low: {low}.")
             except ValueError:
                 return False
         return True
@@ -218,11 +222,16 @@ class Character:
                 difficulty = item
                 print(f"difficulty changed from {self.difficulty} to {difficulty}")
         try:
-            table = self.combat_action_table[[difficulty,'Outcome']]
+            table = self.combat_action_table[[difficulty, 'Outcome']]
         except KeyError:
-            print(f"KeyError discovered in table using {difficulty}")
+            print(f"roll_for_combat_action: KeyError discovered in table using {difficulty}")
             print(f"Could not complete task.")
             return
+        except TypeError:
+            print(f"roll_for_combat_acton: TypeError discovered for {self.combat_targeting_table_name}")
+            print(f"Cannot complete task.")
+            return
+
         # print(f"action table: {table}")
         filtered_table = table[table[difficulty] != '-']
         # print(f"filtered action table: {filtered_table}")

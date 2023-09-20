@@ -90,21 +90,32 @@ class CombatModelerWindow(QWidget):
         self.check_table_validation()
 
     def check_table_validation(self):
+        """This method generates table warnings and returns False for a table marker
+        missing or invalid. It returns True if the tables passed validation."""
+        ctr = 0
         for i in range(self.tab_widget1.count()):
             # We cannot use a truth value on a dataframe. So, we have to check instead to
             # if it is a str instead of a pd.DataFrame.
             if isinstance(self.tab_widget1.widget(i).character.combat_targeting_table, str):
+                ctr += 1
                 self.generate_error_dialog(
                     self.tab_widget1.widget(i).character.combat_targeting_table_name)
             if isinstance(self.tab_widget1.widget(i).character.combat_action_table, str):
+                ctr += 1
                 self.generate_error_dialog(
                     self.tab_widget1.widget(i).character.combat_action_table_name)
             if isinstance(self.tab_widget2.widget(i).character.combat_targeting_table, str):
+                ctr += 1
                 self.generate_error_dialog(
                     self.tab_widget2.widget(i).character.combat_targeting_table_name)
             if isinstance(self.tab_widget2.widget(i).character.combat_action_table, str):
+                ctr += 1
                 self.generate_error_dialog(
                     self.tab_widget2.widget(i).character.combat_action_table_name)
+        if ctr != 0:
+            return False
+        else:
+            return True
 
     def generate_error_dialog(self, table_name):
         error_msg = f"Combat {table_name} has invalid formatting or is missing."
@@ -142,14 +153,29 @@ class CombatModelerWindow(QWidget):
     def run_simulation(self):
         ctr = 0
         self.text_display.append(
-            f"<h2>Beginning Event {self.event_counter}</h2>")
+            f"<h2>Beginning Event {self.event_counter + 1}</h2>")
+        validation = self.check_table_validation()
+        if not validation:
+            self.text_display.append(
+                f"<h1>One of the combat tables is invalid.</h1>")
+            return
         for i in range(self.tab_widget1.count()):
+            print(f"run_simulation: first group: i: {i}")
+            print(f"run_simulation: status: {self.tab_widget1.widget(i).status}")
+            print(f"run_simulation: action: "
+                  f"{self.tab_widget1.widget(i).character.combat_action_table_name}")
+            print(f"run_simulation: actual table: "
+                  f"{self.tab_widget1.widget(i).character.combat_action_table}")
+            print(f"run_simulation: target: "
+                  f"{self.tab_widget1.widget(i).character.combat_targeting_table_name}")
+            print(f"run_simulation: actual table: "
+                  f"{self.tab_widget1.widget(i).character.combat_targeting_table}")
             if self.tab_widget1.widget(i).status:
                 # Generate an action and a target.
                 self.tab_widget1.widget(i).character.roll_for_combat_action()
                 self.tab_widget1.widget(i).character.roll_for_combat_targeting()
 
-                # Pull out the data_orig that is needed.
+                # Pull out the data that is needed.
                 name = self.tab_widget1.widget(i).character.name
                 action = self.tab_widget1.widget(i).character.action
                 target = self.tab_widget1.widget(i).character.target
@@ -173,6 +199,16 @@ class CombatModelerWindow(QWidget):
                 continue
 
         for i in range(self.tab_widget2.count()):
+            print(f"run_simulation: second group: i: {i}")
+            print(f"run_simulation: status: {self.tab_widget1.widget(i).status}")
+            print(f"run_simulation: action: "
+                  f"{self.tab_widget1.widget(i).character.combat_action_table_name}")
+            print(f"run_simulation: actual table: "
+                  f"{self.tab_widget1.widget(i).character.combat_action_table}")
+            print(f"run_simulation: target: "
+                  f"{self.tab_widget1.widget(i).character.combat_targeting_table_name}")
+            print(f"run_simulation: actual table: "
+                  f"{self.tab_widget1.widget(i).character.combat_targeting_table}")
             if self.tab_widget2.widget(i).status:
                 self.tab_widget2.widget(i).character.roll_for_combat_action()
                 self.tab_widget2.widget(i).character.roll_for_combat_targeting()
@@ -201,7 +237,7 @@ class CombatModelerWindow(QWidget):
             else:
                 continue
         self.text_display.append(
-            f"<h3>End of Event {self.event_counter}</h3>")
+            f"<h3>End of Event {self.event_counter + 1}</h3>")
         self.event_counter += 1
 
         if ctr == 0:
