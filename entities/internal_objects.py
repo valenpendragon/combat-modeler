@@ -101,7 +101,7 @@ class Character:
         be usable by this program. Other classes that use this will need to respond
         to a self.combat_action_table or self.combat_targeting_table being set to
         "invalid". It will also stop if the status of the table is already missing.
-        """
+        This method returns no values. All changes are made in place."""
         if isinstance(self.combat_action_table, str):
             return
         if isinstance(self.combat_targeting_table, str):
@@ -151,6 +151,52 @@ class Character:
                     errors += 1
             if errors != 0:
                 return
+            # The final step is to make sure that the series in each table column
+            # have sequential values with no gaps. self.check_series() is a static
+            # method to perform that operation.
+            if not self.check_series(action_series):
+                bad_series = DIFFICULTY_VARIATIONS[n]
+                print(f"validating_tables: series {bad_series} in {action_table_name} is not sequential.")
+                self.combat_action_table = "invalid"
+                errors += 1
+            if not self.check_series(target_series):
+                bad_series = DIFFICULTY_VARIATIONS[n]
+                print(f"validating_tables: series {bad_series} in {targeting_table_name} is not sequential.")
+                self.combat_targeting_table = "invalid"
+                errors += 1
+            if errors != 0:
+                return
+
+    @staticmethod
+    def check_series(series: pd.DataFrame):
+        """This static method checks a series to make sure that the actual integer
+        values in the series are sequential and have no gaps. It returns True if everything
+        checks out, False otherwise."""
+        filtered_series = series[lambda s: s != '-']
+        print(f"check_series: filtered_series: {filtered_series}")
+        previous_value = 0
+        errors = 0
+        for item in filtered_series:
+            l = item.split('-')
+            low = int(l[0])
+            if len(l) == 2:
+                high = int(l[1])
+            else:
+                high = None
+            print(f"check_series: previous value: {previous_value} low: {low}, high: {high}, l: {l}")
+            if previous_value != (low - 1):
+                print(f"check_series: sequential test failed for series {series}")
+                errors += 1
+            if high is not None and high != 0:
+                print(f"check_series: checking value pair.")
+                if low >= high:
+                    print(f"check_series: a pair of values in an entry failed sequential test. "
+                          f"series: {series}")
+                    errors += 1
+                previous_value = high
+            else:
+                previous_value = low
+        return errors == 0
 
     @staticmethod
     def check_item(item: str) -> bool:
