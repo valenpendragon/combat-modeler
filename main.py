@@ -85,7 +85,7 @@ class StartupWindow(QMainWindow):
 
         else:
             QMessageBox.critical(self, 'Fatal Error',
-                                 'Required Configuration file, configuration-tables.xlsx not found in /data_orig')
+                                 'Required Configuration file, configuration-tables.xlsx not found in /data')
 
     def validate_tables(self):
         # One error is enough to stop this software from working properly.
