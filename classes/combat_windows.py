@@ -85,37 +85,65 @@ class CombatModelerWindow(QWidget):
         mainLayout.addWidget(self.toolbar, 2, 0, 2, 0)
 
         self.setLayout(mainLayout)
-
-        # Checking the results of the validations.
-        self.check_table_validation()
+        print(f"CombatModelerWindow.init: Initialization completed.")
 
     def check_table_validation(self):
-        """This method generates table warnings and returns False for a table marker
-        missing or invalid. It returns True if the tables passed validation."""
-        ctr = 0
+        """This method generates warnings when a table is not valid. It also checks
+        to see if a table was assigned. It returns a tuple of integers, the first is
+        the error count, the second the number that were missing. This allows the
+        requesting method or function to determine if there is an actual problem."""
+        error_ctr = 0
+        missing_ctr = 0
+        print(f"CombatModelerWindow.check_table_validation: Testing tables.")
         for i in range(self.tab_widget1.count()):
-            # We cannot use a truth value on a dataframe. So, we have to check instead to
-            # if it is a str instead of a pd.DataFrame.
-            if isinstance(self.tab_widget1.widget(i).character.combat_targeting_table, str):
-                ctr += 1
-                self.generate_error_dialog(
-                    self.tab_widget1.widget(i).character.combat_targeting_table_name)
-            if isinstance(self.tab_widget1.widget(i).character.combat_action_table, str):
-                ctr += 1
-                self.generate_error_dialog(
-                    self.tab_widget1.widget(i).character.combat_action_table_name)
-            if isinstance(self.tab_widget2.widget(i).character.combat_targeting_table, str):
-                ctr += 1
-                self.generate_error_dialog(
-                    self.tab_widget2.widget(i).character.combat_targeting_table_name)
-            if isinstance(self.tab_widget2.widget(i).character.combat_action_table, str):
-                ctr += 1
-                self.generate_error_dialog(
-                    self.tab_widget2.widget(i).character.combat_action_table_name)
-        if ctr != 0:
-            return False
-        else:
-            return True
+            # We need to check if a pd.DataFrame was added as a targeting table.
+            print(f"CombatModelerWindow.check_table_validation: checking "
+                  f"combat_targeting_table in widget panel 1: "
+                  f"{self.tab_widget1.widget(i).character.combat_targeting_table}")
+            if not isinstance(self.tab_widget1.widget(i).character.combat_targeting_table,
+                              pd.DataFrame):
+                if self.tab_widget1.widget(i).character.combat_targeting_table == "missing":
+                    missing_ctr += 1
+                else:
+                    error_ctr += 1
+                    self.generate_error_dialog(
+                        self.tab_widget1.widget(i).character.combat_targeting_table_name)
+            print(f"CombatModelerWindow.check_table_validation: checking "
+                  f"combat_action_table in widget panel 1: "
+                  f"{self.tab_widget1.widget(i).character.combat_targeting_table}")
+            if not isinstance(self.tab_widget1.widget(i).character.combat_action_table,
+                              pd.DataFrame):
+                if self.tab_widget1.widget(i).character.combat_action_table == "missing":
+                    missing_ctr += 1
+                else:
+                    error_ctr += 1
+                    self.generate_error_dialog(
+                        self.tab_widget1.widget(i).character.combat_action_table_name)
+            print(f"CombatModelerWindow.check_table_validation: checking "
+                  f"combat_targeting_table in widget panel 2: "
+                  f"{self.tab_widget1.widget(i).character.combat_targeting_table}")
+            if not isinstance(self.tab_widget2.widget(i).character.combat_targeting_table,
+                              pd.DataFrame):
+                if self.tab_widget2.widget(i).character.combat_targeting_table == "missing":
+                    missing_ctr += 1
+                else:
+                    error_ctr += 1
+                    self.generate_error_dialog(
+                        self.tab_widget2.widget(i).character.combat_targeting_table_name)
+            print(f"CombatModelerWindow.check_table_validation: checking "
+                  f"combat_action_table in widget panel 2: "
+                  f"{self.tab_widget1.widget(i).character.combat_targeting_table}")
+            if not isinstance(self.tab_widget2.widget(i).character.combat_action_table,
+                              pd.DataFrame):
+                if self.tab_widget2.widget(i).character.combat_action_table == "missing":
+                    missing_ctr += 1
+                else:
+                    error_ctr += 1
+                    self.generate_error_dialog(
+                        self.tab_widget2.widget(i).character.combat_action_table_name)
+        print(f"CombatModelerWindow.check_table_validation: Validation completed. Error "
+              f"count: {error_ctr}. Missing count: {missing_ctr}.")
+        return (error_ctr, missing_ctr)
 
     def generate_error_dialog(self, table_name):
         error_msg = f"Combat {table_name} has invalid formatting or is missing."
@@ -151,24 +179,30 @@ class CombatModelerWindow(QWidget):
         return config
 
     def run_simulation(self):
+        print(f"CombatModelerWindow.run_simulation: Starting simulation.")
         ctr = 0
         self.text_display.append(
             f"<h2>Beginning Event {self.event_counter + 1}</h2>")
-        validation = self.check_table_validation()
-        if not validation:
+        errors, missing = self.check_table_validation()
+        if errors:
             self.text_display.append(
                 f"<h1>One of the combat tables is invalid.</h1>")
             return
+        if missing == 20:
+            self.text_display.append(
+                f"<h1>None of the combatants were made active.</h1>")
+
         for i in range(self.tab_widget1.count()):
-            print(f"run_simulation: first group: i: {i}")
-            print(f"run_simulation: status: {self.tab_widget1.widget(i).status}")
-            print(f"run_simulation: action: "
+            print(f"CombatModelerWindow.run_simulation: first group: i: {i}")
+            print(f"CombatModelerWindow.run_simulation: status: "
+                  f"{self.tab_widget1.widget(i).status}")
+            print(f"CombatModelerWindow.run_simulation: action: "
                   f"{self.tab_widget1.widget(i).character.combat_action_table_name}")
-            print(f"run_simulation: actual table: "
+            print(f"CombatModelerWindow.run_simulation: actual table: "
                   f"{self.tab_widget1.widget(i).character.combat_action_table}")
-            print(f"run_simulation: target: "
+            print(f"CombatModelerWindow.run_simulation: target: "
                   f"{self.tab_widget1.widget(i).character.combat_targeting_table_name}")
-            print(f"run_simulation: actual table: "
+            print(f"CombatModelerWindow.run_simulation: actual table: "
                   f"{self.tab_widget1.widget(i).character.combat_targeting_table}")
             if self.tab_widget1.widget(i).status:
                 # Generate an action and a target.
