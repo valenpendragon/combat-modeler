@@ -44,12 +44,14 @@ class Character:
         self.combat_targeting_table = None
         self.combat_status = 'Normal'
         self.create_table_names()
-        # print(f"__init__: {self}")
+        print(f"Character.__init__: {self}")
+        print(f"Character.__init__: Initialization completed.")
 
     def clear_combat(self):
         """This method is required to clear the combat values when the
         Run Simulation button is pressed. It is included in the __init__()
         method rather than duplicate code."""
+        print(f"Character.clear_combat: Clearing combat settings.")
         self.target = None
         self.action = None
         self.combat_action_table_name = None
@@ -57,7 +59,8 @@ class Character:
         self.combat_targeting_table_name = None
         self.combat_targeting_table = None
         self.combat_status = 'Normal'
-        # print(f"clear_combat: {self}")
+        print(f"Character.clear_combat: {self}")
+        print(f"Character.clear_combat: clear_combat completed.")
 
     def update_status(self, name,  combat_role, combat_stance, difficulty,
                       role_variant=None, individual_level=None):
@@ -66,6 +69,7 @@ class Character:
         replaced or because their role, stance, and/or role variant need to
         change during combat. Difficulty and individual level will change if
         character changes or the GM needs to tweak the combat."""
+        print(f"Character.update_status: Update starting.")
         self.name = name
         self.combat_role = combat_role
         self.combat_stance = combat_stance
@@ -74,12 +78,15 @@ class Character:
         self.level = individual_level
         self.clear_combat()
         self.create_table_names()
-        # print(f"update_status: {self}")
+        print(f"Character.update_status: {self}")
+        print(f"Character.update_status: update completed.")
 
     def create_table_names(self):
         """This method sets the Action and Targeting combat table names. It also
         calls the load_table() method to load and set these table attribute
         assignments."""
+        print(f"Character.create_table_names: Beginning creation of table names and "
+              f"loading tables.")
         role = self.combat_role
         stance = self.combat_stance
         role_variant = self.role_variant
@@ -94,7 +101,8 @@ class Character:
         self.combat_action_table = self.load_table(action_table_name)
         self.combat_targeting_table = self.load_table(targeting_table_name)
         self.validate_tables()
-        # print(f"create_table_names: {self}")
+        print(f"Character.create_table_names: {self}")
+        print(f"Character.create_table_names: pulling tables completed.")
 
     def validate_tables(self):
         """This method ensures that the combat action and targeting tables will
@@ -102,6 +110,7 @@ class Character:
         to a self.combat_action_table or self.combat_targeting_table being set to
         "invalid". It will also stop if the status of the table is already missing.
         This method returns no values. All changes are made in place."""
+        print(f"Character.validate_tables: Beginning validation of tables to be used.")
         if isinstance(self.combat_action_table, str):
             return
         if isinstance(self.combat_targeting_table, str):
@@ -117,17 +126,22 @@ class Character:
         cols.append('Outcome')
         errors = 0
         if cols != action_cols:
-            print(f"validate_tables: cols: {cols}. action_cols: {action_cols}")
-            print(f"validate_tables: marking table invalid")
+            print(f"Character.validate_tables: cols: {cols}. action_cols: {action_cols}")
+            print(f"Character.validate_tables: marking table invalid")
             self.combat_action_table = "invalid"
             errors += 1
         if cols != target_cols:
-            print(f"validate_tables: cols: {cols}. target_cols: {target_cols}")
-            print(f"validate_tables: marking table invalid")
+            print(f"Character.validate_tables: cols: {cols}. target_cols: {target_cols}")
+            print(f"Character.validate_tables: marking table invalid")
             self.combat_targeting_table = "invalid"
             errors += 1
         if errors != 0:
+            print(f"Character.validate_tables: {errors} have been generated. Action "
+                  f"table, {action_table_name} or targeting table, {targeting_table_name} "
+                  f"has an invalid format. Ending processing.")
             return
+        print(f"Character.validate_tables: action table {action_table_name} and target "
+              f"table {targeting_table_name} passed phase 1 validation.")
 
         # The columns of the tables are correct or an approximate match.
         # Now, the contents of each columns need to checked. Columns A through
@@ -141,39 +155,56 @@ class Character:
             target_series = targeting_table[targeting_table.columns[n]]
             for item in action_series:
                 if not self.check_item(item):
-                    print(f"validating_tables: item: {item} in table {action_table_name} failed validation")
+                    print(f"Character.validate_tables: item: {item} in table {action_table_name} "
+                          f"failed validation")
                     self.combat_action_table = "invalid"
                     errors += 1
             for item in target_series:
                 if not self.check_item(item):
-                    print(f"validating_tables: item: {item} in table {targeting_table_name} failed validation")
+                    print(f"Character.validate_tables: item: {item} in table "
+                          f"{targeting_table_name} failed validation")
                     self.combat_targeting_table = "invalid"
                     errors += 1
             if errors != 0:
+                print(f"Character.validate_tables: {errors} have been generated. Action "
+                      f"table, {action_table_name} or targeting table, {targeting_table_name} "
+                      f"has an invalid format. Ending processing.")
                 return
+            print(f"Character.validate_tables: action table {action_table_name} and target "
+                  f"table {targeting_table_name} passed phase 2 validation.")
+
             # The final step is to make sure that the series in each table column
             # have sequential values with no gaps. self.check_series() is a static
             # method to perform that operation.
             if not self.check_series(action_series):
                 bad_series = DIFFICULTY_VARIATIONS[n]
-                print(f"validating_tables: series {bad_series} in {action_table_name} is not sequential.")
+                print(f"Character.validate_tables: series {bad_series} in "
+                      f"{action_table_name} is not sequential.")
                 self.combat_action_table = "invalid"
                 errors += 1
             if not self.check_series(target_series):
                 bad_series = DIFFICULTY_VARIATIONS[n]
-                print(f"validating_tables: series {bad_series} in {targeting_table_name} is not sequential.")
+                print(f"Character.validate_tables: series {bad_series} in "
+                      f"{targeting_table_name} is not sequential.")
                 self.combat_targeting_table = "invalid"
                 errors += 1
             if errors != 0:
+                print(f"Character.validate_tables: {errors} have been generated. Action "
+                      f"table, {action_table_name} or targeting table, {targeting_table_name} "
+                      f"has an invalid format. Ending processing.")
                 return
+            print(f"Character.validate_tables: action table {action_table_name} and target "
+                  f"table {targeting_table_name} passed phase 1 validation.")
+            return
 
     @staticmethod
     def check_series(series: pd.DataFrame):
         """This static method checks a series to make sure that the actual integer
         values in the series are sequential and have no gaps. It returns True if everything
         checks out, False otherwise."""
+        print(f"Character.check_series: Starting validation of series {series}.")
         filtered_series = series[lambda s: s != '-']
-        print(f"check_series: filtered_series: {filtered_series}")
+        print(f"Character.check_series: filtered_series: {filtered_series}")
         previous_value = 0
         errors = 0
         for item in filtered_series:
@@ -183,19 +214,20 @@ class Character:
                 high = int(l[1])
             else:
                 high = None
-            print(f"check_series: previous value: {previous_value} low: {low}, high: {high}, l: {l}")
+            print(f"Character.check_series: previous value: {previous_value} low: {low}, high: {high}, l: {l}")
             if previous_value != (low - 1):
-                print(f"check_series: sequential test failed for series {series}")
+                print(f"Character.check_series: sequential test failed for series {series}")
                 errors += 1
             if high is not None and high != 0:
                 print(f"check_series: checking value pair.")
                 if low >= high:
-                    print(f"check_series: a pair of values in an entry failed sequential test. "
+                    print(f"Character.check_series: a pair of values in an entry failed sequential test. "
                           f"series: {series}")
                     errors += 1
                 previous_value = high
             else:
                 previous_value = low
+        print(f"Character.check_series: Series check completed with {errors} errors.")
         return errors == 0
 
     @staticmethod
@@ -203,17 +235,18 @@ class Character:
         """This static method checks a string to see if the format is correct for
         combat action or targeting tables. It returns True if so, False if not."""
         # print(f"check_item: item: {item}")
+        print(f"Character.check_item: Starting validation of item, {item}.")
         if item == "-":
             return True
         l = item.split('-')
-        # print(f"check_item: l: {l}.")
+        print(f"Character.check_item: l: {l}.")
         if len(l) > 2:
             return False
         elif len(l) == 2:
             try:
                 low = int(l[0])
                 high = int(l[1])
-                # print(f"check_item: low: {low}. high: {high}.")
+                print(f"Character.check_item: low: {low}. high: {high}.")
             except ValueError:
                 return False
             if low > high:
@@ -223,7 +256,7 @@ class Character:
         else:
             try:
                 low = int(l[0])
-                # print(f"check_item: low: {low}.")
+                print(f"Character.check_item: low: {low}.")
             except ValueError:
                 return False
         return True
@@ -236,13 +269,17 @@ class Character:
         :param combat_tables: filepath, optional, defaults to COMBAT_TABLES
         :return pd.DataFrame or str
         """
+        print(f"Character.load_table: Beginning extraction of table {table_name} "
+              f"from {combat_tables}.")
         xls = pd.ExcelFile(combat_tables)
         worksheet_name = table_name[:31]
+        print(f"Character.load_table: table_name: {table_name}. "
+              f"worksheet_name: {worksheet_name}.")
         try:
             table = pd.read_excel(xls, worksheet_name)
         except ValueError:
             return "missing"
-        # print(f"load_table: {table}")
+        print(f"Character.load_table: Table {table} found.")
         return table
 
     def __str__(self):
@@ -262,25 +299,27 @@ class Character:
         and returns the text in the 'Outcome' column of the dataframe corresponding to
         that number. This result is assigned to Character.action."""
         # Grab the two columns we need from the table.
+        print(f"Character.roll_for_combat_action: Determining combat action.")
         difficulty = self.difficulty
         for item in self.combat_targeting_table.columns:
             if item.strip() == self.difficulty:
                 difficulty = item
-                print(f"difficulty changed from {self.difficulty} to {difficulty}")
+                print(f"Character.roll_for_combat_action: difficulty "
+                      f"changed from {self.difficulty} to {difficulty}")
         try:
             table = self.combat_action_table[[difficulty, 'Outcome']]
         except KeyError:
-            print(f"roll_for_combat_action: KeyError discovered in table using {difficulty}")
-            print(f"Could not complete task.")
+            print(f"Character: roll_for_combat_action: KeyError discovered in table "
+                  f"using {difficulty}. Could not complete task.")
             return
         except TypeError:
-            print(f"roll_for_combat_acton: TypeError discovered for {self.combat_targeting_table_name}")
-            print(f"Cannot complete task.")
+            print(f"Character: roll_for_combat_acton: TypeError discovered for "
+                  f"{self.combat_targeting_table_name}. Cannot complete task.")
             return
 
-        # print(f"action table: {table}")
+        print(f"Character.roll_for_combat_action: action table: {table}")
         filtered_table = table[table[difficulty] != '-']
-        # print(f"filtered action table: {filtered_table}")
+        print(f"Character.roll_for_combat_action: filtered action table: {filtered_table}")
         self.action = self.determine_result_from_table(filtered_table, difficulty)
 
         # Generally, 'Normal' is not included in action outcomes. So, just in case,
@@ -293,7 +332,8 @@ class Character:
                 status_flag = True
         if not status_flag:
             self.combat_status = 'Normal'
-        print(f"roll_for_combat_action: {self}")
+        print(f"Character.roll_for_combat_action: {self}")
+        print(f"Character.roll_for_combat_action: Combat action determined successfully.")
 
     def roll_for_combat_targeting(self):
         """This method finds the minimum and maximum values in the combat targeting table,
@@ -301,22 +341,25 @@ class Character:
         and returns the text in the 'Outcome' column of the dataframe corresponding to
         that number. This result is assigned to Character.target."""
         # Grab the two columns we need from the table.
+        print(f"Character.roll_for_combat_targeting: Determining target.")
         difficulty = self.difficulty
         for item in self.combat_targeting_table.columns:
             if item.strip() == self.difficulty:
                 difficulty = item
-                # print(f"difficulty changed from {self.difficulty} to {difficulty}")
+                print(f"Character.roll_for_combat_targeting: difficulty "
+                      f"changed from {self.difficulty} to {difficulty}")
         try:
             table = self.combat_targeting_table[[difficulty,'Outcome']]
         except KeyError:
-            print(f"KeyError discovered in table using {difficulty}")
-            print(f"Could not complete task.")
+            print(f"Character.roll_for_combat_targeting: KeyError discovered in "
+                  f"table using {difficulty}. Could not complete task.")
             return
-        # print(f"target table: {table}")
+        print(f"Character.roll_for_combat_targeting: target_table: {table}")
         filtered_table = table[table[difficulty] != '-']
-        # print(f"filtered target table: {filtered_table}")
+        print(f"Character.roll_for_combat_targeting: filtered target table: {filtered_table}")
         self.target = self.determine_result_from_table(filtered_table, difficulty)
-        # print(f"roll_for_combat_targeting: {self}")
+        print(f"Character.roll_for_combat_targeting: {self}")
+        print(f"Character.roll_for_combat_targeting: Target determination completed.")
 
     def determine_result_from_table(self, filtered_table, difficulty):
         """
@@ -330,50 +373,59 @@ class Character:
         :param difficulty: str
         :return: str
         """
-        print(f"determine_result_from_table: starting process")
-        # print(f"filtered table: {filtered_table}")
+        print(f"Character.determine_result_from_table: starting process.")
+        print(f"Character.determine_result_from_table: filtered table: {filtered_table}")
         min_entry = filtered_table.iloc[0, 0]
         min_val = int(min_entry.split('-')[0])
         max_entry = filtered_table.iloc[-1, 0]
         max_val = self.return_int_from_table_item(max_entry)
         roll = random.randint(min_val, max_val)
-        # print(f"min: {min_val}. max: {max_val}. roll: {roll}")
+        print(f"Character.determine_result_from_table: min: {min_val}. max: {max_val}. roll: {roll}")
 
         series = filtered_table[difficulty]
         idx = 0
         for item in series:
             list_values = item.split('-')
-            # print(f"idx: {idx}. item: {item}. list_values: {list_values}")
+            print(f"Character.determine_result_from_table: idx: {idx}. item: {item}. "
+                  f"list_values: {list_values}")
             comp_val = self.return_int_from_table_item(item)
             result = filtered_table['Outcome'].iloc[idx]
-            # print(f"comp_val: {comp_val}. roll: {roll} result: {result}")
+            print(f"Character.determine_result_from_table: comp_val: "
+                  f"{comp_val}. roll: {roll} result: {result}")
             if roll > comp_val:
                 idx += 1
                 continue
             else:
                 break
+        print(f"Character.determine_result_from_table: Result, {result} determined.")
         return result
 
     @staticmethod
     def convert_table_string(s: str):
         """This static method takes a string of integers and converts it into a integer.
-        If the integers are all zeros, it convert it into the correct power of ten."""
+        If the integers are all zeros, it converts it into the correct power of ten."""
+        print(f"Character.convert_table_string: Beginning string conversion.")
         len_s = len(s)
         if int(s) == 0:
-            return 10**len_s
+            result = 10**len_s
         else:
-            return int(s)
+            result = int(s)
+        print(f"Character.convert_table_string: String converted to {result}.")
+        return
 
     def return_int_from_table_item(self, s: str, larger=True):
+        print(f"Character.return_int_from_table_item: Pulling integer from item {s}.")
         list_s = s.split('-')
         len_list_s = len(list_s)
         if len_list_s == 1:
-            return self.convert_table_string(list_s[0])
+            result = self.convert_table_string(list_s[0])
         else:
             if larger:
-                return self.convert_table_string(list_s[1])
+                result = self.convert_table_string(list_s[1])
             else:
-                return self.convert_table_string(list_s[0])
+                result = self.convert_table_string(list_s[0])
+        print(f"Character.return_int_from_table_item: Result is {result}.")
+        return result
 
 
 if __name__ == "__main__":

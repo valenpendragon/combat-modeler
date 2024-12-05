@@ -233,15 +233,15 @@ class CombatModelerWindow(QWidget):
                 continue
 
         for i in range(self.tab_widget2.count()):
-            print(f"run_simulation: second group: i: {i}")
-            print(f"run_simulation: status: {self.tab_widget1.widget(i).status}")
-            print(f"run_simulation: action: "
+            print(f"CombatModelerWindow.run_simulation: second group: i: {i}")
+            print(f"CombatModelerWindow.run_simulation: status: {self.tab_widget1.widget(i).status}")
+            print(f"CombatModelerWindow.run_simulation: action: "
                   f"{self.tab_widget1.widget(i).character.combat_action_table_name}")
-            print(f"run_simulation: actual table: "
+            print(f"CombatModelerWindow.run_simulation: actual table: "
                   f"{self.tab_widget1.widget(i).character.combat_action_table}")
-            print(f"run_simulation: target: "
+            print(f"CombatModelerWindow.run_simulation: target: "
                   f"{self.tab_widget1.widget(i).character.combat_targeting_table_name}")
-            print(f"run_simulation: actual table: "
+            print(f"CombatModelerWindow.run_simulation: actual table: "
                   f"{self.tab_widget1.widget(i).character.combat_targeting_table}")
             if self.tab_widget2.widget(i).status:
                 self.tab_widget2.widget(i).character.roll_for_combat_action()
@@ -432,8 +432,10 @@ class CharacterTab(QWidget):
         self.layout.addWidget(self.update_label, 7, 1)
 
         self.setLayout(self.layout)
+        print(f"CharacterTab.init: Initialization of character tab completed.")
 
     def update_character(self):
+        print(f"CharacterTab.update_character: Character update started.")
         self.name = self.name_input.text()
         self.combat_role = self.combat_role_cbox.currentText()
         self.combat_stance = self.combat_stance_cbox.currentText()
@@ -454,9 +456,10 @@ class CharacterTab(QWidget):
         time_str = "%d/%m/%y %H:%M"
         update_text = f"{self.name} updated at {time.strftime(time_str)}"
         self.update_label.setText(update_text)
+        print(f"CharacterTab.update_character: Updates completed.")
 
     def toggle_status(self):
-        """This status determines whether or not the character will be used
+        """This status determines whether the character will be used
         when the Run Simulation button is clicked in the CharacterModeler
         window."""
         if self.status:
