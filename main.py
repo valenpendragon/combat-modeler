@@ -6,8 +6,8 @@ from classes import ConfigurationWindow, CombatModelerWindow
 import sys
 import os
 
-CONFIGURATION_FILEPATH = 'data/configuration-tables.xlsx'
-COMBAT_TABLES_FILEPATH = 'data/combat-tables.xlsx'
+CONFIGURATION_FILEPATH = 'data_orig/configuration-tables.xlsx'
+COMBAT_TABLES_FILEPATH = 'data_orig/combat-tables.xlsx'
 REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
                        'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
@@ -95,21 +95,33 @@ class StartupWindow(QMainWindow):
             worksheet = self.required_config_dfs[title]
             if len(worksheet.columns) != 2:
                 errors += 1
+                print(f"StartupWindow.validate_tables: Required {title} has the wrong "
+                      f"number of columns.")
             if worksheet.columns[1].strip() != 'Description':
                 errors += 1
+                print(f"StartupWindow.validate_tables: Required {title} is missing "
+                      f"'Description' column.")
             if title == "Combat Outcomes" or title == "Combat Targeting Summary":
                 if worksheet.columns[0].strip() != 'Outcome':
                     errors += 1
+                    print(f"StartupWindow.validate_tables: Required {title} is missing "
+                          f"'Outcome' column.")
             elif title == "Combat Roles" or title == "Combat Stances":
                 if worksheet.columns[0].strip() != 'Role':
                     errors += 1
+                    print(f"StartupWindow.validate_tables: Required {title} is missing "
+                          f"'Role' column.")
             else:
                 # There is an extra table loaded that is not required.
                 errors += 1
+                print(f"StartupWindow.validate_tables: {title} in required tables "
+                      f"is extraneous.")
             for col in worksheet.columns:
                 for idx in worksheet.index:
                     if not isinstance(worksheet[col][idx], str):
                         errors += 1
+                        print(f"StartupWindow.validate_tables: Required {title} has column "
+                              f"{worksheet[col][idx]} that is not a string.")
             if errors > 0:
                 error_msg = f"Format of required configuration worksheet, {title}, is invalid."
                 QMessageBox.critical(self, 'Fatal Error', error_msg)
@@ -123,29 +135,44 @@ class StartupWindow(QMainWindow):
                 if title == "Combat Role Variations":
                     if len(worksheet.columns) != 2:
                         errors += 1
+                        print(f"StartupWindow.validate_tables: Optional {title} has the wrong "
+                              f"number of columns.")
                     else:
                         df_cols = [col.strip() for col in worksheet.columns]
                         if df_cols != ['Role Variant', 'Description']:
                             errors += 1
+                            print(f"StartupWindow.validate_tables: Optional {title} has "
+                                  f"incorrect columns {df_cols}.")
                     for col in worksheet.columns:
                         for idx in worksheet.index:
                             if not isinstance(worksheet[col][idx], str):
                                 errors += 1
+                                print(f"StartupWindow.validate_tables: Optional {title} has "
+                                      f"column {worksheet[col][idx]} that is not a string.")
                 else:
                     # This is either a Combat Surges or Lulls table.
                     # Construct the list of columns.
                     cols = ['Outcome']
                     min_lvls = [f"Minor {level}" for level in INDIVIDUAL_LEVEL]
+                    print(f"StartupWindow.validate_tables: min_lvls: {min_lvls}.")
                     maj_lvls = [f"Major {level}" for level in INDIVIDUAL_LEVEL]
+                    print(f"StartupWindow.validate_tables: maj_lvls: {maj_lvls}.")
                     cols.extend(min_lvls)
                     cols.extend(maj_lvls)
+                    print(f"StartupWindow.validate_tables: cols: {cols}")
                     df_cols = [col.strip() for col in worksheet.columns]
+                    print(f"StartupWindow.validate_tables: df_cols: {df_cols}")
                     if cols != df_cols:
                         errors += 1
+                        print(f"StartupWindow.validate_tables: cols and df_cols are not "
+                              f"equal in Combat Surge/Lull table {title}")
                     for col in worksheet.columns:
                         for idx in worksheet.index:
                             if not isinstance(worksheet[col][idx], str):
                                 errors += 1
+                                print(f"StartupWindow.validate_tables: Combat Surge/Lull "
+                                      f"table {title} has a column {worksheet[col][idx]} "
+                                      f"that is not a string.")
             if errors > 0:
                 error_msg = f"Format of optional configuration worksheet, {title}, is invalid."
                 QMessageBox.critical(self, 'Fatal Error', error_msg)
