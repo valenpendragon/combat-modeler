@@ -5,7 +5,6 @@ import time
 import pandas as pd
 import random
 
-COMBAT_TABLES_FILEPATH = './data/combat-tables.xlsx'
 COMBAT_STATUSES = ['Normal', 'Minor Surge', 'Major Surge', 'Minor Lull', 'Major Lull']
 DIFFICULTY_VARIATIONS = ['A', 'B', 'C', 'D']
 
@@ -29,11 +28,12 @@ class Character:
         by the user from INDIVIDUAL_LEVEL
     """
     def __init__(self, name,  combat_role, combat_stance, difficulty,
-                 role_variant=None, individual_level=None):
+                 combat_tables_filepath, role_variant=None, individual_level=None):
         self.name = name
         self.combat_role = combat_role
         self.combat_stance = combat_stance
         self.difficulty = difficulty
+        self.combat_workbook_filepath = combat_tables_filepath
         self.role_variant = role_variant
         self.level = individual_level
         self.target = None
@@ -261,14 +261,14 @@ class Character:
                 return False
         return True
 
-    @staticmethod
-    def load_table(table_name, combat_tables=COMBAT_TABLES_FILEPATH):
-        """This method extracts the required table from COMBAT_TABLES and returns
+    def load_table(self, table_name):
+        """This method extracts the required table from self.combat_workbook_filepath and returns
         it. Note: Excel limits worksheet names to 31 characters.
         :param table_name: str, required
         :param combat_tables: filepath, optional, defaults to COMBAT_TABLES
         :return pd.DataFrame or str
         """
+        combat_tables = self.combat_workbook_filepath
         print(f"Character.load_table: Beginning extraction of table {table_name} "
               f"from {combat_tables}.")
         xls = pd.ExcelFile(combat_tables)
@@ -278,6 +278,7 @@ class Character:
         try:
             table = pd.read_excel(xls, worksheet_name)
         except ValueError:
+            print(f"Character.load_table: Table {worksheet_name} could not be found.")
             return "missing"
         print(f"Character.load_table: Table {table} found.")
         return table

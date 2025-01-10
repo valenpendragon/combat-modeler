@@ -69,7 +69,8 @@ class StartupWindow(QMainWindow):
                 try:
                     self.required_config_dfs[worksheet] = pd.read_excel(xls, worksheet)
                 except ValueError:
-                    QMessageBox.critical(self, "Error", f"Required {worksheet} not found in {self.config_path}")
+                    QMessageBox.critical(self, "Error", f"Required {worksheet} not found in"
+                                                        f" {self.config_path}")
             print(f"self.required_config_dfs: {self.required_config_dfs}")
             config_found_label = QLabel('Config loaded Successfully. ')
             self.statusbar.addWidget(config_found_label)
@@ -85,7 +86,8 @@ class StartupWindow(QMainWindow):
 
         else:
             QMessageBox.critical(self, 'Fatal Error',
-                                 'Required Configuration file, configuration-tables.xlsx not found in /data')
+                                 'Required Configuration file, configuration-tables.xlsx not '
+                                 'found in /data')
 
     def validate_tables(self):
         # One error is enough to stop this software from working properly.
@@ -184,7 +186,8 @@ class StartupWindow(QMainWindow):
 
     def start_combat_window(self):
         self.combat_window = CombatModelerWindow(self.required_config_dfs,
-                                                 self.optional_config_dfs)
+                                                 self.optional_config_dfs,
+                                                 COMBAT_TABLES_FILEPATH)
         self.combat_window.show()
 
     def exit_app(self):

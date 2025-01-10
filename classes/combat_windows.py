@@ -9,7 +9,6 @@ import sys
 import os
 import datetime
 
-CONFIGURATION_FILEPATH = './data/configuration-tables.xlsx'
 REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
                        'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
@@ -18,10 +17,15 @@ INDIVIDUAL_LEVEL = ['Low', 'Moderate', 'Advanced', 'Elite']
 
 
 class CombatModelerWindow(QWidget):
-    def __init__(self, required_config_dfs, optional_config_dfs, parent=None):
+    def __init__(self, required_config_dfs, optional_config_dfs,
+                 combat_tables_filepath, parent=None):
         super().__init__(parent)
         self.setMinimumSize(800, 600)
         self.setWindowTitle("Combat Modeler")
+
+        # Set the filepaths for the combat tables to make it grabs the
+        # correct workbook.
+        self.combat_workbook_filepath = combat_tables_filepath
 
         mainLayout = QGridLayout()
 
@@ -38,16 +42,16 @@ class CombatModelerWindow(QWidget):
         self.event_counter = 0
 
         # Create tabs
-        self.tab0 = CharacterTab(self, self.config, "One")
-        self.tab1 = CharacterTab(self, self.config, "Two")
-        self.tab2 = CharacterTab(self, self.config, "Three")
-        self.tab3 = CharacterTab(self, self.config, "Four")
-        self.tab4 = CharacterTab(self, self.config, "Five")
-        self.tab5 = CharacterTab(self, self.config, "Six")
-        self.tab6 = CharacterTab(self, self.config, "Seven")
-        self.tab7 = CharacterTab(self, self.config, "Eight")
-        self.tab8 = CharacterTab(self, self.config, "Nine")
-        self.tab9 = CharacterTab(self, self.config, "Ten")
+        self.tab0 = CharacterTab(self, self.config, self.combat_workbook_filepath, "One")
+        self.tab1 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Two")
+        self.tab2 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Three")
+        self.tab3 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Four")
+        self.tab4 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Five")
+        self.tab5 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Six")
+        self.tab6 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Seven")
+        self.tab7 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Eight")
+        self.tab8 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Nine")
+        self.tab9 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Ten")
         self.tab_widget1 = QTabWidget()
         self.tab_widget1.addTab(self.tab0, "One")
         self.tab_widget1.addTab(self.tab1, "Two")
@@ -234,7 +238,8 @@ class CombatModelerWindow(QWidget):
 
         for i in range(self.tab_widget2.count()):
             print(f"CombatModelerWindow.run_simulation: second group: i: {i}")
-            print(f"CombatModelerWindow.run_simulation: status: {self.tab_widget1.widget(i).status}")
+            print(f"CombatModelerWindow.run_simulation: status: "
+                  f"{self.tab_widget1.widget(i).status}")
             print(f"CombatModelerWindow.run_simulation: action: "
                   f"{self.tab_widget1.widget(i).character.combat_action_table_name}")
             print(f"CombatModelerWindow.run_simulation: actual table: "
@@ -301,16 +306,16 @@ class CombatModelerWindow(QWidget):
         self.text_display.clear()
         self.tab_widget1.clear()
         self.tab_widget2.clear()
-        self.tab0 = CharacterTab(self, self.config, "One")
-        self.tab1 = CharacterTab(self, self.config, "Two")
-        self.tab2 = CharacterTab(self, self.config, "Three")
-        self.tab3 = CharacterTab(self, self.config, "Four")
-        self.tab4 = CharacterTab(self, self.config, "Five")
-        self.tab5 = CharacterTab(self, self.config, "Six")
-        self.tab6 = CharacterTab(self, self.config, "Seven")
-        self.tab7 = CharacterTab(self, self.config, "Eight")
-        self.tab8 = CharacterTab(self, self.config, "Nine")
-        self.tab9 = CharacterTab(self, self.config, "Ten")
+        self.tab0 = CharacterTab(self, self.config, self.combat_workbook_filepath, "One")
+        self.tab1 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Two")
+        self.tab2 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Three")
+        self.tab3 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Four")
+        self.tab4 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Five")
+        self.tab5 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Six")
+        self.tab6 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Seven")
+        self.tab7 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Eight")
+        self.tab8 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Nine")
+        self.tab9 = CharacterTab(self, self.config, self.combat_workbook_filepath, "Ten")
         self.tab_widget1.addTab(self.tab0, "One")
         self.tab_widget1.addTab(self.tab1, "Two")
         self.tab_widget1.addTab(self.tab2, "Three")
@@ -336,9 +341,10 @@ class CombatModelerWindow(QWidget):
 
 
 class CharacterTab(QWidget):
-    def __init__(self, parent, config, name):
+    def __init__(self, parent, config, combat_tables_filepath, name):
         super().__init__(parent)
         self.config = config
+        self.combat_workbook_filepath = combat_tables_filepath
 
         # Create character assigned to this tab.
         self.name = name
@@ -356,6 +362,7 @@ class CharacterTab(QWidget):
         self.character = Character(name = self.name,
                                    combat_role=self.combat_role,
                                    combat_stance=self.combat_stance,
+                                   combat_tables_filepath=self.combat_workbook_filepath,
                                    difficulty=self.difficulty,
                                    role_variant=self.role_variant,
                                    individual_level=self.level)
