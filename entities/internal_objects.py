@@ -214,19 +214,32 @@ class Character:
                 high = int(l[1])
             else:
                 high = None
-            print(f"Character.check_series: previous value: {previous_value} low: {low}, high: {high}, l: {l}")
+            print(f"Character.check_series: previous value: {previous_value} low: {low}, "
+                  f"high: {high}, l: {l}, errors: {errors}")
+
+            if low == 0 and high is None:
+                low = 100
+                print(f"Character.check_series: l: {l[0]} is zero and high is None. "
+                      f"Setting low to {low}.")
+
             if previous_value != (low - 1):
-                print(f"Character.check_series: sequential test failed for series {series}")
+                print(f"Character.check_series: previous value is not equal to low - 1.")
                 errors += 1
-            if high is not None and high != 0:
-                print(f"check_series: checking value pair.")
+
+            if high is not None:
+                if high == 0:
+                    high = 100
+                    print(f"Character.check_series: low is {low}. h is {l[1]} which is zero. "
+                          f"Setting high to {high}.")
+                print(f"Character.check_series: checking value pair.")
                 if low >= high:
-                    print(f"Character.check_series: a pair of values in an entry failed sequential test. "
-                          f"series: {series}")
+                    print(f"Character.check_series: low:, {low}, is greater than or equal "
+                          f"to high, {high}, Series failed sequential test.")
                     errors += 1
                 previous_value = high
             else:
                 previous_value = low
+
         print(f"Character.check_series: Series check completed with {errors} errors.")
         return errors == 0
 
@@ -412,7 +425,7 @@ class Character:
         else:
             result = int(s)
         print(f"Character.convert_table_string: String converted to {result}.")
-        return
+        return result
 
     def return_int_from_table_item(self, s: str, larger=True):
         print(f"Character.return_int_from_table_item: Pulling integer from item {s}.")
