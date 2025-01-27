@@ -6,8 +6,8 @@ from classes import ConfigurationWindow, CombatModelerWindow
 import sys
 import os
 
-CONFIGURATION_FILEPATH = 'data_orig/configuration-tables.xlsx'
-COMBAT_TABLES_FILEPATH = 'data_orig/combat-tables.xlsx'
+CONFIGURATION_FILEPATH = 'data/configuration-tables.xlsx'
+COMBAT_TABLES_FILEPATH = 'data/combat-tables.xlsx'
 REQUIRED_WORKSHEETS = ['Combat Outcomes', 'Combat Roles', 'Combat Stances',
                        'Combat Targeting Summary']
 OPTIONAL_WORKSHEETS = ['Combat Role Variations', 'Combat Surges', 'Combat Lulls']
