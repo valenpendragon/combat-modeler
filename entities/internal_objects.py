@@ -5,6 +5,7 @@ import time
 import pandas as pd
 import random
 from functions import check_item
+from functions import check_series
 
 COMBAT_STATUSES = ['Normal', 'Minor Surge', 'Major Surge', 'Minor Lull', 'Major Lull']
 DIFFICULTY_VARIATIONS = ['A', 'B', 'C', 'D']
@@ -175,15 +176,15 @@ class Character:
                   f"table {targeting_table_name} passed phase 2 validation.")
 
             # The final step is to make sure that the series in each table column
-            # have sequential values with no gaps. self.check_series() is a static
-            # method to perform that operation.
-            if not self.check_series(action_series):
+            # have sequential values with no gaps. check_series() is a function
+            # to perform that operation.
+            if not check_series(action_series):
                 bad_series = DIFFICULTY_VARIATIONS[n]
                 print(f"Character.validate_tables: series {bad_series} in "
                       f"{action_table_name} is not sequential.")
                 self.combat_action_table = "invalid"
                 errors += 1
-            if not self.check_series(target_series):
+            if not check_series(target_series):
                 bad_series = DIFFICULTY_VARIATIONS[n]
                 print(f"Character.validate_tables: series {bad_series} in "
                       f"{targeting_table_name} is not sequential.")
@@ -197,52 +198,6 @@ class Character:
             print(f"Character.validate_tables: action table {action_table_name} and target "
                   f"table {targeting_table_name} passed phase 1 validation.")
             return
-
-    @staticmethod
-    def check_series(series: pd.DataFrame):
-        """This static method checks a series to make sure that the actual integer
-        values in the series are sequential and have no gaps. It returns True if everything
-        checks out, False otherwise."""
-        print(f"Character.check_series: Starting validation of series {series}.")
-        filtered_series = series[lambda s: s != '-']
-        print(f"Character.check_series: filtered_series: {filtered_series}")
-        previous_value = 0
-        errors = 0
-        for item in filtered_series:
-            l = item.split('-')
-            low = int(l[0])
-            if len(l) == 2:
-                high = int(l[1])
-            else:
-                high = None
-            print(f"Character.check_series: previous value: {previous_value} low: {low}, "
-                  f"high: {high}, l: {l}, errors: {errors}")
-
-            if low == 0 and high is None:
-                low = 100
-                print(f"Character.check_series: l: {l[0]} is zero and high is None. "
-                      f"Setting low to {low}.")
-
-            if previous_value != (low - 1):
-                print(f"Character.check_series: previous value is not equal to low - 1.")
-                errors += 1
-
-            if high is not None:
-                if high == 0:
-                    high = 100
-                    print(f"Character.check_series: low is {low}. h is {l[1]} which is zero. "
-                          f"Setting high to {high}.")
-                print(f"Character.check_series: checking value pair.")
-                if low >= high:
-                    print(f"Character.check_series: low:, {low}, is greater than or equal "
-                          f"to high, {high}, Series failed sequential test.")
-                    errors += 1
-                previous_value = high
-            else:
-                previous_value = low
-
-        print(f"Character.check_series: Series check completed with {errors} errors.")
-        return errors == 0
 
     def load_table(self, table_name):
         """This method extracts the required table from self.combat_workbook_filepath and returns
