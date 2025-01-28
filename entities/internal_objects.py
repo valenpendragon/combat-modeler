@@ -4,6 +4,7 @@ import time
 
 import pandas as pd
 import random
+from functions import check_item
 
 COMBAT_STATUSES = ['Normal', 'Minor Surge', 'Major Surge', 'Minor Lull', 'Major Lull']
 DIFFICULTY_VARIATIONS = ['A', 'B', 'C', 'D']
@@ -154,13 +155,13 @@ class Character:
             action_series = action_table[action_table.columns[n]]
             target_series = targeting_table[targeting_table.columns[n]]
             for item in action_series:
-                if not self.check_item(item):
+                if not check_item(item):
                     print(f"Character.validate_tables: item: {item} in table {action_table_name} "
                           f"failed validation")
                     self.combat_action_table = "invalid"
                     errors += 1
             for item in target_series:
-                if not self.check_item(item):
+                if not check_item(item):
                     print(f"Character.validate_tables: item: {item} in table "
                           f"{targeting_table_name} failed validation")
                     self.combat_targeting_table = "invalid"
@@ -242,37 +243,6 @@ class Character:
 
         print(f"Character.check_series: Series check completed with {errors} errors.")
         return errors == 0
-
-    @staticmethod
-    def check_item(item: str) -> bool:
-        """This static method checks a string to see if the format is correct for
-        combat action or targeting tables. It returns True if so, False if not."""
-        # print(f"check_item: item: {item}")
-        print(f"Character.check_item: Starting validation of item, {item}.")
-        if item == "-":
-            return True
-        l = item.split('-')
-        print(f"Character.check_item: l: {l}.")
-        if len(l) > 2:
-            return False
-        elif len(l) == 2:
-            try:
-                low = int(l[0])
-                high = int(l[1])
-                print(f"Character.check_item: low: {low}. high: {high}.")
-            except ValueError:
-                return False
-            if low > high:
-                return high == 0
-            else:
-                return True
-        else:
-            try:
-                low = int(l[0])
-                print(f"Character.check_item: low: {low}.")
-            except ValueError:
-                return False
-        return True
 
     def load_table(self, table_name):
         """This method extracts the required table from self.combat_workbook_filepath and returns
